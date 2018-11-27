@@ -11,3 +11,7 @@ dist/
 build/
 *.egg-info/
 
+#*#
+.#*
+*~
+
