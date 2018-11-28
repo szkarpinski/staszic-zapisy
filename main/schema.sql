@@ -7,13 +7,14 @@ CREATE TABLE nauczyciele (
   imie TEXT NOT NULL,
   nazwisko TEXT NOT NULL,
   email TEXT NOT NULL,
-  present INT NOT NULL DEFAULT 1
-)
+  present INTEGER NOT NULL DEFAULT 1
+);
 
 CREATE TABLE wizyty (
-  id_nauczyciela INT NOT NULL,
+  id_nauczyciela INTEGER NOT NULL,
   imie_rodzica TEXT NOT NULL,
   nazwisko_rodzica TEXT NOT NULL,
-  email_rodzica TEXT NOT NULL,
-  godzina TEXT NOT NULL
-)
+  email_rodzica TEXT NOT NULL, /*nie wiem czy możemy przechowywać email, to dana osobowa.*/
+  godzina TEXT NOT NULL,
+  FOREIGN KEY (id_nauczyciela) REFERENCES nauczyciele (id)
+);
