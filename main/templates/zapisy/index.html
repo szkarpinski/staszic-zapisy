@@ -5,7 +5,7 @@
     <script>
         var teachers = [
             {% for n in nauczyciele %}
-                {'name':'{{n.imie}} {{n.nazwisko}}', 'rendered': '<a href="nauczyciel/{{n.id}}">{{n.imie}} {{n.nazwisko}}</a><br>'},
+                {'name':'{{n.imie}} {{n.nazwisko}}', 'fname':'{{n.imie}}', 'lname':'{{n.nazwisko}}', 'rendered': '<a href="nauczyciel/{{n.id}}">{{n.imie}} {{n.nazwisko}}</a><br>'},
             {% endfor %}
         ]
     </script>
@@ -22,7 +22,8 @@
         }
 
         function render_teachers(query) {
-            let filtered = [for (t of teachers) if (match(query, t.name)) t];
+            let filtered = [for (t of teachers) if (match(query, t.name)) t]
+                .sort(function (a, b) {return a.lname.localeCompare(b.lname)});
             return [for (f of filtered) f.rendered].join(' ');
         }
 
