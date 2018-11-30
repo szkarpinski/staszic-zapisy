@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        var teachers = [
+            {% for n in nauczyciele %}
+                {'name':'{{n.imie}} {{n.nazwisko}}', 'rendered': '<a href="{{n.id}}">{{n.imie}} {{n.nazwisko}}</a><br/>'},
+            {% endfor %}
+        ]
+
+    </script>
+    <script>
+        function simplify(string)
+        {
+            return string.toLowerCase().replace(/ą/g, 'a')
+                .replace(/ć/g, 'c')
+                .replace(/ę/g, 'e')
+                .replace(/ł/g, 'l')
+                .replace(/ń/g, 'n')
+                .replace(/ó/g, 'o')
+                .replace(/ś/g, 's')
+                .replace(/ż/g, 'z')
+                .replace(/ź/g, 'z');
+        }
+
+        function match(query, value) {
+            query = simplify(query);
+            value = simplify(value);
+
+            let words = query.split(" ");
+            for (w of words) {
+                if (!value.includes(w)) return false;
+            }
+            return true;
+        }
+
+        function render_teachers(query) {
+            let filtered = [for (t of teachers) if (match(query, t.name)) t];
+            return [for (f of filtered) f.rendered].join(' ');
+        }
+
+        function search_input() {
+            let query = $('#search').val();
+            $('#options').empty();
+            $('#options').append(render_teachers(query));
+        }
+    </script>
+</head>
+<body onload="search_input();">
+    <input type="text" id="search" oninput="search_input();" value="123"/>
+    <div id="options">
+
+    </div>
+</body>
+</html>
