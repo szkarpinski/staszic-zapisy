@@ -21,8 +21,7 @@ def index():
     ).fetchall()
     
     # View
-    #return render_template('zapisy/index.html')
-    return '\n'.join([' '.join(r) for r in nauczyciele]) + 'fdsafdsafdsafdsa'
+    return render_template('zapisy/index.html', nauczyciele=nauczyciele)
     
 
 '''
