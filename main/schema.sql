@@ -2,12 +2,13 @@ DROP TABLE IF EXISTS nauczyciele;
 /*DROP TABLE IF EXISTS rodzice;*/
 DROP TABLE IF EXISTS wizyty;
 
+
 CREATE TABLE nauczyciele (
   id INTEGER PRIMARY KEY NOT NULL,
   imie TEXT NOT NULL,
   nazwisko TEXT NOT NULL,
   email TEXT NOT NULL,
-  present INTEGER NOT NULL DEFAULT 1
+  obecny INTEGER NOT NULL DEFAULT 1
 );
 
 CREATE TABLE wizyty (
