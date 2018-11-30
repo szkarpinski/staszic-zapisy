@@ -7,10 +7,9 @@
     <script>
         var teachers = [
             {% for n in nauczyciele %}
-                {'name':'{{n.imie}} {{n.nazwisko}}', 'rendered': '<a href="{{n.id}}">{{n.imie}} {{n.nazwisko}}</a><br/>'},
+                {'name':'{{n.imie}} {{n.nazwisko}}', 'rendered': '<a href="nauczyciel/{{n.id}}">{{n.imie}} {{n.nazwisko}}</a><br/>'},
             {% endfor %}
         ]
-
     </script>
     <script>
         function simplify(string)
@@ -50,7 +49,7 @@
     </script>
 </head>
 <body onload="search_input();">
-    <input type="text" id="search" oninput="search_input();" value="123"/>
+    <input type="text" id="search" oninput="search_input();"/>
     <div id="options">
 
     </div>
