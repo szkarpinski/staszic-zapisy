@@ -1,39 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Nauczyciele</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script>
         var teachers = [
             {% for n in nauczyciele %}
-                {'name':'{{n.imie}} {{n.nazwisko}}', 'rendered': '<a href="nauczyciel/{{n.id}}">{{n.imie}} {{n.nazwisko}}</a><br/>'},
+                {'name':'{{n.imie}} {{n.nazwisko}}', 'rendered': '<a href="nauczyciel/{{n.id}}">{{n.imie}} {{n.nazwisko}}</a><br>'},
             {% endfor %}
         ]
     </script>
     <script>
-        function simplify(string)
-        {
-            return string.toLowerCase().replace(/ą/g, 'a')
-                .replace(/ć/g, 'c')
-                .replace(/ę/g, 'e')
-                .replace(/ł/g, 'l')
-                .replace(/ń/g, 'n')
-                .replace(/ó/g, 'o')
-                .replace(/ś/g, 's')
-                .replace(/ż/g, 'z')
-                .replace(/ź/g, 'z');
+        function simplify(string) {
+            return string.toLowerCase().replace(/ą/g, 'a').replace(/ć/g, 'c').replace(/ę/g, 'e').replace(/ł/g, 'l')
+                .replace(/ń/g, 'n').replace(/ó/g, 'o').replace(/ś/g, 's').replace(/ż/g, 'z').replace(/ź/g, 'z');
         }
 
         function match(query, value) {
             query = simplify(query);
             value = simplify(value);
-
-            let words = query.split(" ");
-            for (w of words) {
-                if (!value.includes(w)) return false;
-            }
-            return true;
+            return query.split(" ").every(function(word) {return value.includes(word);});
         }
 
         function render_teachers(query) {
@@ -42,16 +29,12 @@
         }
 
         function search_input() {
-            let query = $('#search').val();
-            $('#options').empty();
-            $('#options').append(render_teachers(query));
+            $('#teachers').html(render_teachers($('#search').val()));
         }
     </script>
 </head>
 <body onload="search_input();">
     <input type="text" id="search" oninput="search_input();"/>
-    <div id="options">
-
-    </div>
+    <div id="teachers"></div>
 </body>
 </html>
