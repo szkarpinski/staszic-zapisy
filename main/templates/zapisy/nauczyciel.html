@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        var meetings = [
+            {% for r in rozklad %}
+                {'start': new Date("{{r.start}}"), 'end': new Date("{{r.koniec}}"), 'free': {{r.wolne|lower}} },
+            {% endfor %}
+        ]
+    </script>
+    <script>
+        var selected_meeting = null;
+
+        function expand_meeting(mid) {
+            if (selected_meeting == mid) return expand_meeting(-1);
+            selected_meeting = mid;
+            $('#meeting_form').detach().appendTo((mid < 0 ? $('#dummy') : $('#meeting'+mid)));
+            $('#meeting_id').attr('value', mid);
+        }
+    </script>
+    <style>
+        body {
+            padding-left: 20%;
+            padding-right: 20%;
+        }
+        .meeting {
+            padding: 0.5em;
+            margin-top: 0.5em;
+        }
+        .green {
+            border: 1px solid green;
+        }
+        .red {
+            border: 1px solid red;
+        }
+        #meeting_form {
+            margin-top: 1em;
+            padding-top: 1em;
+            border-top: 1px solid gray;
+        }
+    </style>
+</head>
+<body>
+<div id="meetings">
+    {% for r in rozklad %}
+        <div id="meeting{{loop.index}}" class="meeting {% if r.wolne %}green{% else %}red{% endif %}">
+            <div class="meeting_header" onclick="expand_meeting( {{loop.index}} );"> {{r.start.strftime('%H:%M')}} -- {{r.koniec.strftime('%H:%M')}} </div>
+        </div>
+    {% endfor %}
+    <div hidden="hidden" id="dummy">
+        <form id="meeting_form">
+            <input id="meeting_id" type="hidden" value="0"/>
+            <input type="text" placeholder="imię"/>
+            <input type="text" placeholder="nazwisko"/>
+            <input type="text" placeholder="adres e-mail"/>
+            <input type="submit"/>
+        </form>
+    </div>
+</div>
+</body>
+</html>
