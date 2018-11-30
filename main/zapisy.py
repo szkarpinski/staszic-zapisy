@@ -23,7 +23,7 @@ def index():
     return render_template('zapisy/index.html', nauczyciele=nauczyciele)
     
 # View wyboru godziny do zapisu (tu trzeba będzie dopisać jakieś POSTy)
-@bp.route('/<int:id>')
+@bp.route('/nauczyciel/<int:id>')
 def nauczyciel(id):
     db = get_db()
 
