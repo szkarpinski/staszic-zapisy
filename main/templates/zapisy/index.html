@@ -1,9 +1,7 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <title>Nauczyciele</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+{% extends "base.html" %}
+{% block title %} Nauczyciele {% endblock title %}
+{% block scripts %}
+    {{ super () }}
     <script>
         var teachers = [
             {% for n in nauczyciele %}
@@ -31,10 +29,12 @@
         function search_input() {
             $('#teachers').html(render_teachers($('#search').val()));
         }
+
+        $('body').ready(function(){search_input()});
     </script>
-</head>
-<body onload="search_input();">
+{% endblock scripts %}
+{% block nav %} Wybór nauczyciela {% endblock nav %}
+{% block content %}
     <input type="text" id="search" oninput="search_input();"/>
     <div id="teachers"></div>
-</body>
-</html>
+{% endblock content %}

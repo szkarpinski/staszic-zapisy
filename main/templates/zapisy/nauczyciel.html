@@ -1,9 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+{% extends "base.html" %}
+{% block title %}Imię Nazwisko{% endblock title %}
+{% block scripts %}
+    {{ super () }}
     <script>
         var meetings = [
             {% for r in rozklad %}
@@ -21,6 +19,9 @@
             $('#meeting_id').attr('value', mid);
         }
     </script>
+{% endblock scripts %}
+{% block styles %}
+    {{ super() }}
     <style>
         body {
             padding-left: 20%;
@@ -42,23 +43,23 @@
             border-top: 1px solid gray;
         }
     </style>
-</head>
-<body>
-<div id="meetings">
-    {% for r in rozklad %}
-        <div id="meeting{{loop.index}}" class="meeting {% if r.wolne %}green{% else %}red{% endif %}">
-            <div class="meeting_header" onclick="expand_meeting( {{loop.index}} );"> {{r.start.strftime('%H:%M')}} -- {{r.koniec.strftime('%H:%M')}} </div>
+{% endblock styles %}
+{% block nav %}Wybór godziny{% endblock nav %}
+{% block content %}
+    <div id="meetings">
+        {% for r in rozklad %}
+            <div id="meeting{{loop.index}}" class="meeting {% if r.wolne %}green{% else %}red{% endif %}">
+                <div class="meeting_header" onclick="expand_meeting( {{loop.index}} );"> {{r.start.strftime('%H:%M')}} -- {{r.koniec.strftime('%H:%M')}} </div>
+            </div>
+        {% endfor %}
+        <div hidden="hidden" id="dummy">
+            <form id="meeting_form">
+                <input id="meeting_id" type="hidden" value="0"/>
+                <input type="text" placeholder="imię"/>
+                <input type="text" placeholder="nazwisko"/>
+                <input type="text" placeholder="adres e-mail"/>
+                <input type="submit"/>
+            </form>
         </div>
-    {% endfor %}
-    <div hidden="hidden" id="dummy">
-        <form id="meeting_form">
-            <input id="meeting_id" type="hidden" value="0"/>
-            <input type="text" placeholder="imię"/>
-            <input type="text" placeholder="nazwisko"/>
-            <input type="text" placeholder="adres e-mail"/>
-            <input type="submit"/>
-        </form>
     </div>
-</div>
-</body>
-</html>
+{% endblock %}}
