@@ -1,26 +1,28 @@
 {% extends "base.html" %}
-{% block title %} Nauczyciele {% endblock title %}
+
+{% block title %}Nauczyciele{% endblock title %}
+
 {% block scripts %}
-    {{ super () }}
+    {{ super() }}
+
     <script>
+
         var teachers = [
             {% for n in nauczyciele %}
                 {'name':'{{n.imie}} {{n.nazwisko}}', 'fname':'{{n.imie}}', 'lname':'{{n.nazwisko}}',
-                    'rendered': '<a class="collection-item" href="nauczyciel/{{n.id}}">{{n.imie}} {{n.nazwisko}}</a>'}{% if not loop.last%},{% endif %}
+                    'rendered': '<a class="collection-item" href="nauczyciel/{{n.id}}">{{n.imie}} {{n.nazwisko}}</a>'},
             {% endfor %}
         ];
 
         var empty = '<li class="collection-item red-text">Nie znaleziono nauczyciela.</li>';
-    </script>
-    <script>
+
         function simplify(string) {
             return string.toLowerCase().replace(/ą/g, 'a').replace(/ć/g, 'c').replace(/ę/g, 'e').replace(/ł/g, 'l')
                 .replace(/ń/g, 'n').replace(/ó/g, 'o').replace(/ś/g, 's').replace(/ż/g, 'z').replace(/ź/g, 'z');
         }
 
         function match(query, value) {
-            query = simplify(query);
-            value = simplify(value);
+            query = simplify(query); value = simplify(value);
             return query.split(" ").every(function(word) {return value.includes(word);});
         }
 
@@ -31,26 +33,28 @@
         }
 
         function search_input() {
-            $('#teachers').empty();
-            $('#teachers').append(render_teachers($('#search').val()));
+            $('#teachers').html(render_teachers($('#search').val()));
         }
 
         $('body').ready(function(){search_input()});
+
     </script>
+
 {% endblock scripts %}
+
 {% block content %}
 
-<br>
+    <br>
 
-<div class="row">
-    <div class="col s12">
-        <div class="card white">
-            <div class="card-content white-text">
-                <input type="text" id="search" oninput="search_input();" placeholder="Wyszukaj nauczyciela"/>
-                <ul class="collection" id="teachers"></ul>
+    <div class="row">
+        <div class="col s12">
+            <div class="card white">
+                <div class="card-content white-text">
+                    <input type="text" id="search" oninput="search_input();" placeholder="Wyszukaj nauczyciela"/>
+                    <ul class="collection" id="teachers"></ul>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 {% endblock content %}
