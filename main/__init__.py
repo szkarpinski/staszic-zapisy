@@ -26,6 +26,9 @@ def create_app(test_config=None):
     app.register_blueprint(zapisy.bp)
     app.add_url_rule('/', endpoint='index')
 
+    from . import admin
+    app.register_blueprint(admin.bp)
+
     @app.route('/henlo')
     def henlo():
         return 'Henlo , Warld!1'
