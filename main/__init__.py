@@ -28,6 +28,7 @@ def create_app(test_config=None):
 
     from . import admin
     app.register_blueprint(admin.bp)
+    admin.init_app(app)
 
     @app.route('/henlo')
     def henlo():

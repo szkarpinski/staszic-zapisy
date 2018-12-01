@@ -1,8 +1,10 @@
 import functools
 import datetime as dt
 import configparser
+import os
 from flask import (
-    Blueprint, render_template)
+    Blueprint, render_template, current_app
+)
 from main.db import get_db
 
 
@@ -41,7 +43,7 @@ def nauczyciel(id):
     
     # Ustawienie wszystkich dat
     conf = configparser.ConfigParser()
-    conf.read('./config.ini')
+    conf.read(os.path.join(current.app.instance_path, 'config.ini')
     start = dt.datetime.strptime(
         conf['dzien otwarty']['data'] + ' ' + conf['dzien otwarty']['start'],
         '%d/%m/%Y %H:%M'
