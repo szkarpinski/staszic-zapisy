@@ -30,10 +30,10 @@ def nauczyciel(id):
     # Komunikacja z bazą
     zajete = db.execute(
         'SELECT godzina FROM wizyty WHERE id_nauczyciela = ?', (id,)
-    )
+    ).fetchall()
     zajete = [dt.datetime.strptime(
-        conf['dzien otwarty']['data'] + ' ' + t, '%d/%m/%Y %H:%M')
-        for t in zajete]
+        conf['dzien otwarty']['data'] + ' ' + r['godzina'], '%d/%m/%Y %H:%M')
+        for r in zajete]
     imie_nazwisko_nauczyciela = db.execute(
         'SELECT imie, nazwisko FROM nauczyciele WHERE id = ?', (id,)
     ).fetchone()
