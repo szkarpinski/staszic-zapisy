@@ -43,7 +43,7 @@ def nauczyciel(id):
     
     # Ustawienie wszystkich dat
     conf = configparser.ConfigParser()
-    conf.read(os.path.join(current.app.instance_path, 'config.ini')
+    conf.read(os.path.join(current.app.instance_path, 'config.ini'))
     start = dt.datetime.strptime(
         conf['dzien otwarty']['data'] + ' ' + conf['dzien otwarty']['start'],
         '%d/%m/%Y %H:%M'
