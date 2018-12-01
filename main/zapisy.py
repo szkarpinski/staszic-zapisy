@@ -36,10 +36,12 @@ def nauczyciel(id):
     zajete = [dt.datetime.strptime(
         conf['dzien otwarty']['data'] + ' ' + r['godzina'], '%d/%m/%Y %H:%M')
         for r in zajete]
-    imie_nazwisko_nauczyciela = db.execute(
+    dane_nauczyciela = db.execute(
         'SELECT imie, nazwisko FROM nauczyciele WHERE id = ?', (id,)
     ).fetchone()
-    # print (imie_nazwisko_nauczyciela['imie'], imie_nazwisko_nauczyciela['nazwisko'])
+    if dane_nauczyciela is None:
+        return 'Nauczyciel not found :('
+    # print (dane_nauczyciela['imie'], dane_nauczyciela['nazwisko'])
     
     # Ustawienie wszystkich dat
     conf = configparser.ConfigParser()
@@ -66,16 +68,9 @@ def nauczyciel(id):
             rozklad.append({'start':t, 'koniec':t + blok, 'wolne':True})
         t += blok
 
-    if imie_nazwisko_nauczyciela is not None:
-        return render_template('zapisy/nauczyciel.html',
-                               rozklad=rozklad,
-                               imie=imie_nazwisko_nauczyciela['imie'],
-                               nazwisko=imie_nazwisko_nauczyciela['nazwisko'],
-        )
-    else:
-        return render_template('zapisy/nauczyciel.html',
-                               rozklad=rozklad,
-                               imie=None,
-                               nazwisko=None,
-        )
+    return render_template('zapisy/nauczyciel.html',
+                           rozklad=rozklad,
+                           imie=dane_nauczyciela['imie'],
+                           nazwisko=dane_nauczyciela['nazwisko'],
+    )
 
