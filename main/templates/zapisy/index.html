@@ -5,9 +5,12 @@
     <script>
         var teachers = [
             {% for n in nauczyciele %}
-                {'name':'{{n.imie}} {{n.nazwisko}}', 'fname':'{{n.imie}}', 'lname':'{{n.nazwisko}}', 'rendered': '<a href="nauczyciel/{{n.id}}">{{n.imie}} {{n.nazwisko}}</a><br>'},
+                {'name':'{{n.imie}} {{n.nazwisko}}', 'fname':'{{n.imie}}', 'lname':'{{n.nazwisko}}',
+                    'rendered': '<a class="collection-item" href="nauczyciel/{{n.id}}">{{n.imie}} {{n.nazwisko}}</a>'}{% if not loop.last%},{% endif %}
             {% endfor %}
-        ]
+        ];
+
+        var empty = '<li class="collection-item red-text">Nie znaleziono nauczyciela.</li>';
     </script>
     <script>
         function simplify(string) {
@@ -22,20 +25,32 @@
         }
 
         function render_teachers(query) {
-            let filtered = [for (t of teachers) if (match(query, t.name)) t]
+            let filtered = teachers.filter(t => match(query, t.name))
                 .sort(function (a, b) {return a.lname.localeCompare(b.lname)});
-            return [for (f of filtered) f.rendered].join(' ');
+            return (filtered.length > 0 ? filtered.map(f => f.rendered).join('') : empty);
         }
 
         function search_input() {
-            $('#teachers').html(render_teachers($('#search').val()));
+            $('#teachers').empty();
+            $('#teachers').append(render_teachers($('#search').val()));
         }
 
         $('body').ready(function(){search_input()});
     </script>
 {% endblock scripts %}
-{% block nav %} Wybór nauczyciela {% endblock nav %}
 {% block content %}
-    <input type="text" id="search" oninput="search_input();"/>
-    <div id="teachers"></div>
+
+<br>
+
+<div class="row">
+    <div class="col s12">
+        <div class="card white">
+            <div class="card-content white-text">
+                <input type="text" id="search" oninput="search_input();" placeholder="Wyszukaj nauczyciela"/>
+                <ul class="collection" id="teachers"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock content %}

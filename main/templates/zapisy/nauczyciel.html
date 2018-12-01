@@ -1,65 +1,64 @@
 {% extends "base.html" %}
 {% block title %}Imię Nazwisko{% endblock title %}
 {% block scripts %}
-    {{ super () }}
-    <script>
-        var meetings = [
-            {% for r in rozklad %}
-                {'start': new Date("{{r.start}}"), 'end': new Date("{{r.koniec}}"), 'free': {{r.wolne|lower}} },
-            {% endfor %}
-        ]
-    </script>
-    <script>
-        var selected_meeting = null;
-
-        function expand_meeting(mid) {
-            if (selected_meeting == mid) return expand_meeting(-1);
-            selected_meeting = mid;
-            $('#meeting_form').detach().appendTo((mid < 0 ? $('#dummy') : $('#meeting'+mid)));
-            $('#meeting_id').attr('value', mid);
-        }
-    </script>
+{{ super () }}
+<script>
+    var meetings = [
+        {% for r in rozklad %}
+    {'start': new Date("{{r.start}}"), 'end': new Date("{{r.koniec}}"), 'free': {{r.wolne|lower}} },
+    {% endfor %}
+    ]
+</script>
+<script>
+    var selected_meeting = null;
+    function expand_meeting(mid) {
+        if (selected_meeting == mid) return expand_meeting(-1);
+        selected_meeting = mid;
+        $('#meeting_form').detach().appendTo((mid < 0 ? $('#dummy') : $('#meeting'+mid)));
+        $('#meeting_id').attr('value', mid);
+    }
+</script>
 {% endblock scripts %}
 {% block styles %}
-    {{ super() }}
-    <style>
-        body {
-            padding-left: 20%;
-            padding-right: 20%;
-        }
-        .meeting {
-            padding: 0.5em;
-            margin-top: 0.5em;
-        }
-        .green {
-            border: 1px solid green;
-        }
-        .red {
-            border: 1px solid red;
-        }
-        #meeting_form {
-            margin-top: 1em;
-            padding-top: 1em;
-            border-top: 1px solid gray;
-        }
-    </style>
+{{ super() }}
+<style>
+    body {
+        padding-left: 20%;
+        padding-right: 20%;
+    }
+    .meeting {
+        padding: 0.5em;
+        margin-top: 0.5em;
+    }
+    .green {
+        border: 1px solid green;
+    }
+    .red {
+        border: 1px solid red;
+    }
+    #meeting_form {
+        margin-top: 1em;
+        padding-top: 1em;
+        border-top: 1px solid gray;
+    }
+</style>
 {% endblock styles %}
 {% block nav %}Wybór godziny{% endblock nav %}
 {% block content %}
-    <div id="meetings">
-        {% for r in rozklad %}
-            <div id="meeting{{loop.index}}" class="meeting {% if r.wolne %}green{% else %}red{% endif %}">
-                <div class="meeting_header" onclick="expand_meeting( {{loop.index}} );"> {{r.start.strftime('%H:%M')}} -- {{r.koniec.strftime('%H:%M')}} </div>
-            </div>
-        {% endfor %}
-        <div hidden="hidden" id="dummy">
-            <form id="meeting_form">
-                <input id="meeting_id" type="hidden" value="0"/>
-                <input type="text" placeholder="imię"/>
-                <input type="text" placeholder="nazwisko"/>
-                <input type="text" placeholder="adres e-mail"/>
-                <input type="submit"/>
-            </form>
-        </div>
+<div id="meetings">
+    {% for r in rozklad %}
+    <div id="meeting{{loop.index}}" class="meeting {% if r.wolne %}green{% else %}red{% endif %}">
+        <div class="meeting_header" onclick="expand_meeting( {{loop.index}} );"> {{r.start.strftime('%H:%M')}} -- {{r.koniec.strftime('%H:%M')}} </div>
     </div>
+    {% endfor %}
+    <div hidden="hidden" id="dummy">
+        <form id="meeting_form">
+            <input id="meeting_id" type="hidden" value="0"/>
+            <input type="text" placeholder="imię"/>
+            <input type="text" placeholder="nazwisko"/>
+            <input type="text" placeholder="adres e-mail"/>
+            <input type="submit"/>
+        </form>
+    </div>
+</div>
 {% endblock %}}
