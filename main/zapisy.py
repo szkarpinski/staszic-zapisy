@@ -66,9 +66,16 @@ def nauczyciel(id):
             rozklad.append({'start':t, 'koniec':t + blok, 'wolne':True})
         t += blok
 
-    return render_template('zapisy/nauczyciel.html',
-                           rozklad=rozklad,
-                           imie = imie_nazwisko_nauczyciela['imie'],
-                           nazwisko = imie_nazwisko_nauczyciela['nazwisko'],
-    )
+    if imie_nazwisko_nauczyciela is not None:
+        return render_template('zapisy/nauczyciel.html',
+                               rozklad=rozklad,
+                               imie=imie_nazwisko_nauczyciela['imie'],
+                               nazwisko=imie_nazwisko_nauczyciela['nazwisko'],
+        )
+    else:
+        return render_template('zapisy/nauczyciel.html',
+                               rozklad=rozklad,
+                               imie=None,
+                               nazwisko=None,
+        )
 
