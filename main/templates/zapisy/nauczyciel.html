@@ -25,8 +25,15 @@
             $('#start').html(time(meetings[selected_meeting].start));
             $('#end').html(time(meetings[selected_meeting].end));
             $('#details').css('display', 'block');
+            $('#hour').attr('value', time(meetings[selected_meeting].start));
+            $('#meeting_id').attr('value', selected_meeting);
         }
 
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                $('body').ready(function(){expand_meeting($('#meeting_id').val()); location.href = "#details"; });
+            {% endif %}
+        {% endwith %}
     </script>
 
 {% endblock scripts %}
@@ -45,9 +52,15 @@
                     <div class="row">
                         {% for r in rozklad %}
                             <div class="col s2">
-                                <a id="meeting{{loop.index0}}" class="btn waves-effect waves-light meeting_header" onclick="expand_meeting({{loop.index0}})" href="#details">
-                                    {{r.start.strftime('%H:%M')}}
-                                </a>
+                                {% if r.wolne %}
+                                    <a id="meeting{{loop.index0}}" class="btn waves-effect waves-light meeting_header" onclick="$('#errors').empty(); expand_meeting({{loop.index0}})" href="#details">
+                                        {{r.start.strftime('%H:%M')}}
+                                    </a>
+                                {% else %}
+                                    <a id="meeting{{loop.index0}}" class="red btn disabled meeting_header">
+                                        {{r.start.strftime('%H:%M')}}
+                                    </a>
+                                {% endif %}
                             </div>
                             {% if loop.index % 6 == 0 and not loop.last %}</div><div class="row">{% endif %}
                         {% endfor %}
@@ -61,8 +74,22 @@
         <div class="col s12">
             <div class="card white">
                 <form id="meeting_form" action="" method="post">
-                    <input id="meeting_id" type="hidden" value="0"/>
+                    <input name="meeting_id" id="meeting_id" type="hidden" value="{{ request.form['meeting_id'] }}"/>
+                    <input name="hour" id="hour" type="hidden" value="{{ request.form['hour'] }}"/>
                     <div class="card-content grey-text text-darken-2 container">
+                        <div class="row">
+                            <div class="col s12 red-text" id="errors">
+                                {% with messages = get_flashed_messages() %}
+                                    {% if messages %}
+                                        <ul class="flashes">
+                                            {% for message in messages %}
+                                                <li>{{ message }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col s6">
                                 <div id="teacher">{{imie}} {{nazwisko}}</div>
@@ -83,32 +110,39 @@
                         </div>
                         <div class="row">
                             <div class="col s6">
-                                <input id="fname" value="{{ request.form['fname'] }}" type="text"/>
-                                <label for="fname">Imię ucznia</label>
+                                <input name="sfname" id="sfname" value="{{ request.form['sfname'] }}" type="text"/>
+                                <label for="sfname">Imię ucznia</label>
                             </div>
                             <div class="col s6">
-                                <input id="lname" value="{{ request.form['lname'] }}" type="text"/>
-                                <label for="lname">Nazwisko ucznia</label>
+                                <input name="slname" id="slname" value="{{ request.form['slname'] }}" type="text"/>
+                                <label for="slname">Nazwisko ucznia</label>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col s6">
-                                <input id="email" value="{{ request.form['email'] }}" class="validate" type="email"/>
+                                <input name="pfname" id="pfname" value="{{ request.form['pfname'] }}" type="text"/>
+                                <label for="pfname">Imię rodzica</label>
+                            </div>
+                            <div class="col s6">
+                                <input name="plname" id="plname" value="{{ request.form['plname'] }}" type="text"/>
+                                <label for="plname">Nazwisko rodzica</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col s6">
+                                <input name="email" id="email" value="{{ request.form['email'] }}" class="validate" type="email"/>
                                 <label for="email">Adres e-mail rodzica</label>
                             </div>
                             <div class="col s6">
                                 <label>
-                                    <input id="rodo" type="checkbox"/>
+                                    <input name="rodo" id="rodo" type="checkbox"/>
                                     <span><small>Wyrażam zgode blablabla</small></span>
                                 </label>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col s12" style="text-align: right">
-                                <button class="btn waves-effect waves-light" type="submit">
-                                    Zarezerwuj
-                                    <i class="material-icons right">send</i>
-                                </button>
+                                <input class="" type="submit" value="Zarezerwuj">
                             </div>
                         </div>
                     </div>
@@ -117,4 +151,4 @@
         </div>
     </div>
 
-{% endblock %}}
+{% endblock %}
