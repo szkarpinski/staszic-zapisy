@@ -33,13 +33,13 @@ def nauczyciel(id):
     # Przetwarzanie zapytania (rezerwacji godziny)
     if request.method == 'POST':
         for key in request.form.keys(): print(key)
-        imie_ucznia = request.form.get('fname')
-        nazwisko_ucznia = request.form.get('lname')
-        imie_rodzica = "Adam" #request.form[' ']
-        nazwisko_rodzica = "Skrrrtcki" #request.form[' ']
+        imie_ucznia = request.form.get('sfname')
+        nazwisko_ucznia = request.form.get('slname')
+        imie_rodzica = request.form.get('pfname')
+        nazwisko_rodzica = request.form.get('plname')
         email = request.form.get('email')
-        godzina = "21:37" #request.form[' ']
-        rodo = True #request.form['rodo']
+        godzina = request.form.get('hour')
+        rodo = request.form.get('rodo')
         error = None
 
         if not imie_ucznia:
