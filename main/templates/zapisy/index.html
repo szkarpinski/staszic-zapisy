@@ -10,7 +10,14 @@
         var teachers = [
             {% for n in nauczyciele %}
                 {'name':'{{n.imie}} {{n.nazwisko}}', 'fname':'{{n.imie}}', 'lname':'{{n.nazwisko}}',
-                    'rendered': '<a class="collection-item" href="nauczyciel/{{n.id}}">{{n.imie}} {{n.nazwisko}}</a>'},
+                    'rendered':
+                        {% if n.obecny %}
+                            '<a class="collection-item" href="nauczyciel/{{n.id}}">{{n.imie}} {{n.nazwisko}}</a>'
+                        {% else %}
+                            '<li class="collection-item grey-text">{{n.imie}} {{n.nazwisko}}' +
+                            '<span class="badge grey lighten-2 white-text">nieobecny</span></li>'
+                        {% endif %}
+                        },
             {% endfor %}
         ];
 
