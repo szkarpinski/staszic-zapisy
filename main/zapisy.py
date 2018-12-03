@@ -33,11 +33,11 @@ def nauczyciel(id):
     # Przetwarzanie zapytania (rezerwacji godziny)
     if request.method == 'POST':
         for key in request.form.keys(): print(key)
-        imie_ucznia = request.form['fname']
-        nazwisko_ucznia = request.form['lname']
+        imie_ucznia = request.form.get('fname')
+        nazwisko_ucznia = request.form.get('lname')
         imie_rodzica = "Adam" #request.form[' ']
         nazwisko_rodzica = "Skrrrtcki" #request.form[' ']
-        email = request.form['email']
+        email = request.form.get('email')
         godzina = "21:37" #request.form[' ']
         rodo = True #request.form['rodo']
         error = None
@@ -54,6 +54,9 @@ def nauczyciel(id):
             error = "Brakuje nazwiska rodzica."
         elif not rodo:
             error = "Brakuje zgody na przetwarzanie danych osobowych."
+        elif not db.execute('SELECT obecny FROM nauczyciele WHERE id = ?',
+                            (id,)).fetchone()['obecny']:
+            error = 'Nauczyciel nie będzie obecny na dniu otwartym.'
         else:
             db.execute('BEGIN TRANSACTION')
             if db.execute('SELECT * FROM wizyty '
@@ -68,14 +71,13 @@ def nauczyciel(id):
             if db.in_transaction:
                 db.commit()
         else:          
-
-            #Rezerwowanie terminu
+            # Rezerwowanie terminu
             db.execute(
                 'INSERT INTO wizyty '
                 '(id_nauczyciela, imie_rodzica, nazwisko_rodzica, email_rodzica, '
-                'godzina)'
-                ' VALUES (?, ?, ?, ?, ?)',
-                (id, imie_rodzica, nazwisko_rodzica, email, godzina)
+                'imie_ucznia, nazwisko_ucznia, godzina)'
+                ' VALUES (?, ?, ?, ?, ?, ?, ?)',
+                (id, imie_rodzica, nazwisko_rodzica, email, imie_ucznia, nazwisko_ucznia, godzina)
             )
             db.commit()
             return redirect(url_for('index'))
@@ -103,10 +105,14 @@ def nauczyciel(id):
         conf['dzien otwarty']['data'] + ' ' + r['godzina'], '%d/%m/%Y %H:%M')
         for r in zajete]
     dane_nauczyciela = db.execute(
-        'SELECT imie, nazwisko FROM nauczyciele WHERE id = ?', (id,)
+        'SELECT imie, nazwisko, obecny FROM nauczyciele WHERE id = ?', (id,)
     ).fetchone()
     if dane_nauczyciela is None:
-        abort(404, "Nauczyciel o podanym ID {0} nie znaleziony :((".format(id))
+        abort(404, 'Nauczyciel o podanym ID {0} nie znaleziony :(('.format(id))
+    elif not dane_nauczyciela['obecny']:
+        abort(404,
+              'Nauczyciel o podanym ID {0} '
+              'nie będzie obecny na dniu otwartym. :(('.format(id))
     # print (dane_nauczyciela['imie'], dane_nauczyciela['nazwisko'])
 
     # Liczenie wolnych godzin
