@@ -15,8 +15,14 @@
 
         var selected_meeting = null;
 
+        function addzero(num) {
+            return (num<10 ? '0' : '')+num;
+        }
+
         function time(date) {
-            return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            let x = addzero(date.getHours())+':'+addzero(date.getMinutes());
+            console.log(date.toString() + ' --> ' + x);
+            return x;
         }
 
         function expand_meeting(mid) {
