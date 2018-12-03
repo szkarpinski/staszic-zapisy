@@ -58,7 +58,11 @@ def nauczyciel(id):
         else:
             db = get_db()
             #sprawdzanie czy termin jest wolny
-            #TODO
+            termin = db.execute(
+                'SELECT godzina FROM wizyty WHERE godzina = ?', (godzina,)
+            ).fetchone()
+            if termin is not None:
+                abort(403, "Ten termin jest zajety")
 
             #Rezerwowanie terminu
             db.execute(
