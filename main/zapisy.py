@@ -3,9 +3,10 @@ import datetime as dt
 import configparser
 import os
 from flask import (
-    Blueprint, render_template, current_app
+    Blueprint, render_template, current_app, request, url_for, make_response, flash
 )
 from main.db import get_db
+from werkzeug.exceptions import abort
 
 
 bp = Blueprint('zapisy', __name__)
@@ -25,8 +26,52 @@ def index():
     return render_template('zapisy/index.html', nauczyciele=nauczyciele)
     
 # View wyboru godziny do zapisu (tu trzeba będzie dopisać jakieś POSTy)
-@bp.route('/nauczyciel/<int:id>')
+@bp.route('/nauczyciel/<int:id>', methods=('GET', 'POST'))
 def nauczyciel(id):
+    #Przetwarzanie zapytania (rezerwacji godziny)
+    if request.method == 'POST':
+        imie_ucznia = request.form.get('fname')
+        nazwisko_ucznia = request.form.get('lname')
+        imie_rodzica = "Adam" #request.form[' ']
+        nazwisko_rodzica = "Skrrrtcki" #request.form[' ']
+        email = request.form.get('email')
+        godzina = "21:37" #request.form[' ']
+        rodo = True #request.form['rodo']
+        error = None
+
+        if not imie_ucznia:
+            error = "Brakuje imienia ucznia.\n"
+        if not nazwisko_ucznia:
+            error = "Brakuje nazwiska ucznia.\n"
+        if not email:
+            error = "Brakuje adresu e-mail.\n"
+        if not imie_rodzica:
+            error = "Brakuje imienia rodzica.\n"
+        if not nazwisko_rodzica:
+            error = "Brakuje nazwiska rodzica.\n"
+        if not rodo:
+            error = "Brakuje zgody na przetwarzanie danych osobowych.\n"
+
+        if error is not None:
+            print(error)
+            flash(error)
+        else:
+            db = get_db()
+            #sprawdzanie czy termin jest wolny
+            #TODO
+
+            #Rezerwowanie terminu
+            db.execute(
+                'INSERT INTO wizyty (id_nauczyciela, imie_rodzica, nazwisko_rodzica,'
+                ' email_rodzica, imie_ucznia, nazwisko_ucznia, godzina)'
+                ' VALUES (?, ?, ?, ?, ?, ?, ?)',
+                (id, imie_rodzica, nazwisko_rodzica, email, imie_ucznia,
+                 nazwisko_ucznia, godzina)
+            )
+            db.commit()
+            # return redirect(url_for('main.index'))
+            return make_response("Success")
+
     db = get_db()
 
     # Komunikacja z bazą
@@ -40,7 +85,7 @@ def nauczyciel(id):
         'SELECT imie, nazwisko FROM nauczyciele WHERE id = ?', (id,)
     ).fetchone()
     if dane_nauczyciela is None:
-        return 'Nauczyciel not found :('
+        abort(404, "Nauczyciel o podanym ID {0} nie znaleziony :((".format(id))
     # print (dane_nauczyciela['imie'], dane_nauczyciela['nazwisko'])
     
     # Ustawienie wszystkich dat

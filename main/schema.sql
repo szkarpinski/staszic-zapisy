@@ -16,6 +16,8 @@ CREATE TABLE wizyty (
   imie_rodzica TEXT NOT NULL,
   nazwisko_rodzica TEXT NOT NULL,
   email_rodzica TEXT NOT NULL, /*nie wiem czy możemy przechowywać email, to dana osobowa.*/
+  imie_ucznia TEXT NOT NULL,
+  nazwisko_ucznia TEXT NOT NULL,
   godzina TEXT NOT NULL,
   FOREIGN KEY (id_nauczyciela) REFERENCES nauczyciele (id)
 );
