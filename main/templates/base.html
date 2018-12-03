@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>
-        Zapisy na dzień otwarty - {% block title %}{% endblock title %}
+        {% block title %}
+            staszic-zapisy
+        {% endblock title %}
     </title>
     {% block scripts %}
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     {% endblock scripts %}
     {% block styles %}
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -17,7 +19,9 @@
 </head>
 <body>
     <div class="container">
-        {% block content %}{% endblock content %}
+        {% block content %}
+
+        {% endblock content %}
     </div>
 </body>
 </html>
