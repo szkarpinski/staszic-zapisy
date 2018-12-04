@@ -79,15 +79,6 @@
                     <input name="hour" id="hour" type="hidden" value="{{ request.form['hour'] }}"/>
                     <div class="card-content grey-text text-darken-2 container">
                         <div class="row">
-                            <div class="col s12 red-text" id="errors">
-                                {% with messages = get_flashed_messages() %}
-                                    {% if messages %}
-                                        {{ messages[0] }}
-                                    {% endif %}
-                                {% endwith %}
-                            </div>
-                        </div>
-                        <div class="row">
                             <div class="col s6">
                                 <div id="teacher">{{imie}} {{nazwisko}}</div>
                                 <label for="teacher">Nauczyciel <a href="/"><small>(zmień)</small></a></label>
@@ -138,7 +129,14 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col s12" style="text-align: right">
+                            <div class="col s8 red-text" id="errors">
+                                {% with messages = get_flashed_messages() %}
+                                    {% if messages %}
+                                        {{ messages[0] }}
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
+                            <div class="col s4" style="text-align: right">
                                 <input class="btn" type="submit" value="Zarezerwuj">
                             </div>
                         </div>
