@@ -11,35 +11,30 @@
             {% for r in rozklad %}
                 {'start': new Date("{{r.start}}"), 'end': new Date("{{r.koniec}}"), 'free': {{r.wolne|lower}} },
             {% endfor %}
-        ]
+        ];
 
         var selected_meeting = null;
 
-        function addzero(num) {
-            return (num<10 ? '0' : '')+num;
-        }
-
         function time(date) {
-            let x = addzero(date.getHours())+':'+addzero(date.getMinutes());
-            console.log(date.toString() + ' --> ' + x);
-            return x;
+            function lz(n) {return (n<10 ? '0' : '')+n};
+            return lz(date.getHours())+':'+lz(date.getMinutes());
         }
 
         function expand_meeting(mid) {
             selected_meeting = mid;
-            console.log(mid);
             $('#start').html(time(meetings[selected_meeting].start));
             $('#end').html(time(meetings[selected_meeting].end));
-            $('#details').css('display', 'block');
             $('#hour').attr('value', time(meetings[selected_meeting].start));
             $('#meeting_id').attr('value', selected_meeting);
+            $('#details').css('display', 'block');
         }
 
         {% with messages = get_flashed_messages() %}
             {% if messages %}
-                $('body').ready(function(){expand_meeting($('#meeting_id').val()); location.href = "#details"; });
+                $('body').ready(function(){expand_meeting($('#meeting_id').val()); location.href = "#details";});
             {% endif %}
         {% endwith %}
+
     </script>
 
 {% endblock scripts %}
@@ -59,11 +54,11 @@
                         {% for r in rozklad %}
                             <div class="col s2">
                                 {% if r.wolne %}
-                                    <a id="meeting{{loop.index0}}" class="btn waves-effect waves-light meeting_header" onclick="$('#errors').empty(); expand_meeting({{loop.index0}})" href="#details">
+                                    <a class="btn waves-effect waves-light meeting_header" onclick="$('#errors').empty(); expand_meeting({{loop.index0}})" href="#details">
                                         {{r.start.strftime('%H:%M')}}
                                     </a>
                                 {% else %}
-                                    <a id="meeting{{loop.index0}}" class="red btn disabled meeting_header">
+                                    <a class="btn disabled meeting_header">
                                         {{r.start.strftime('%H:%M')}}
                                     </a>
                                 {% endif %}
