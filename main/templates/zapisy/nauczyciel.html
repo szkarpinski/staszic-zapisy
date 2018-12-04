@@ -82,11 +82,7 @@
                             <div class="col s12 red-text" id="errors">
                                 {% with messages = get_flashed_messages() %}
                                     {% if messages %}
-                                        <ul class="flashes">
-                                            {% for message in messages %}
-                                                <li>{{ message }}</li>
-                                            {% endfor %}
-                                        </ul>
+                                        {{ messages[0] }}
                                     {% endif %}
                                 {% endwith %}
                             </div>
