@@ -26,20 +26,45 @@ def login_required(view):
 
 
 # Podstawowy interface admina
-@bp.route('/', methods=('GET', 'POST'))
+@bp.route('/admin', methods=('GET', 'POST'))
 @login_required
 def admin():
-    return '2137 XD'
+    if request.method == 'POST':
+        if request.form['submitbtn'] == "delteacher":
+            pass
+        elif request.form['submitbtn'] == "addteacher":
+            pass
+        elif request.form['submitbtn'] == "modifyteacher":
+            pass
+        elif request.form['submitbtn'] == "modifysettings":
+            pass
+        elif request.form['submitbtn'] == "sendmail_close":
+            pass
+    return render_template('admin/panel.html')
 
 
 # Interface logowania
-@bp.route('/login', methods=('GET', 'POST'))
+@bp.route('/admin/login', methods=('GET', 'POST'))
 def login():
-    return 'JP2GMD XD'
+    if request.method == 'POST':
+        # username = request.method.get('username')
+        password = request.method.get('password')
+        conf = configparser.ConfigParser()
+        conf.read(os.path.join(current_app.instance_path, 'config.ini'))
+        # error = None
+        if not check_password_hash(conf['admin']['hash'], password):
+            error = 'Nieprawidłowe hasło daministratora!'
+
+        if error is None:
+            session.clear()
+            session['user'] = 'admin'
+            return redirect(url_for('index'))
+        flash(error)
+    return render_template('admin/login.html')
 
 
 # Wylogowanie
-@bp.route('/logout')
+@bp.route('/admin/logout')
 def logout():
     session.clear()
     return redirect(url_for('index'))
