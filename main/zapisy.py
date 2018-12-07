@@ -25,7 +25,7 @@ def index():
     # View
     return render_template('zapisy/index.html', nauczyciele=nauczyciele)
     
-# View wyboru godziny do zapisu (tu trzeba będzie dopisać jakieś POSTy)
+# View wyboru godziny do zapisu
 @bp.route('/nauczyciel/<int:id>', methods=('GET', 'POST'))
 def nauczyciel(id):
     db = get_db()
@@ -54,11 +54,11 @@ def nauczyciel(id):
             error = "Brakuje nazwiska rodzica."
         elif not rodo:
             error = "Brakuje zgody na przetwarzanie danych osobowych."
+        # Trzeba zrobić jakoś transakcje
         elif not db.execute('SELECT obecny FROM nauczyciele WHERE id = ?',
                             (id,)).fetchone()['obecny']:
             error = 'Nauczyciel nie będzie obecny na dniu otwartym.'
         else:
-            db.execute('BEGIN TRANSACTION')
             if db.execute('SELECT * FROM wizyty '
                           'WHERE id_nauczyciela = ? AND godzina = ?',
                           (id, godzina)).fetchone() is not None:
@@ -68,8 +68,6 @@ def nauczyciel(id):
         if error is not None:
             print(error)
             flash(error)
-            if db.in_transaction:
-                db.commit()
         else:          
             # Rezerwowanie terminu
             db.execute(
