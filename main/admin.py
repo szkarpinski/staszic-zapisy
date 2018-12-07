@@ -26,25 +26,85 @@ def login_required(view):
 
 
 # Podstawowy interface admina
-@bp.route('/admin', methods=('GET', 'POST'))
+@bp.route('/', methods=('GET', 'POST'))
 @login_required
 def admin():
+    db = get_db()
     if request.method == 'POST':
-        if request.form['submitbtn'] == "delteacher":
-            pass
-        elif request.form['submitbtn'] == "addteacher":
-            pass
-        elif request.form['submitbtn'] == "modifyteacher":
-            pass
-        elif request.form['submitbtn'] == "modifysettings":
-            pass
-        elif request.form['submitbtn'] == "sendmail_close":
-            pass
-    return render_template('admin/panel.html')
+        pass
 
+    #Lista nauczycieli
+    nauczyciele = db.execute(
+        'SELECT id, imie, nazwisko, email, obecny FROM nauczyciele'
+    ).fetchall()
+
+    #Opcje
+    conf = configparser.ConfigParser()
+    conf.read(os.path.join(current_app.instance_path, 'config.ini'))
+    
+    
+    return render_template('admin/panel.html', nauczyciele = nauczyciele)
+
+#Interfejs ustawień - szczegóły nauczyciela
+@bp.route('/nauczyciel/<int:id>', methods=('GET', 'POST'))
+@login_required
+def admin_nauczyciel(id):
+    db = get_db()
+    if request.method == 'POST':
+        pass
+
+    #Lista zapisów dla nauczyciela
+    terminy = db.execute(
+        'SELECT imie_ucznia, nazwisko_ucznia, imie_rodzica, nazwisko_rodzica, godzina '
+        'FROM wizyty WHERE id = ?', (id,)
+    ).fetchall()
+    nauczyciel = db.execute(
+        'SELECT imie, nazwisko, email, obecny FROM nauczyciele WHERE id = ?',(id,)
+    ).fetchone()
+
+    return render_template('admin/nauczyciel.html',
+                           terminy = terminy,
+                           nauczyciel = nauczyciel
+    )
+
+    
+#Interfejs dodawania nauczycieli
+@bp.route('/dodaj', methods=('GET', 'POST'))
+@login_required
+def dodaj_nauczyciela():
+    db = get_db()
+    if request.method == 'POST':
+        imie = request.form.get('fname')
+        nazwisko = request.form.get('lname')
+        email  = request.form.get('email')
+        obecny = request.form.get('present')
+        error = None
+
+        if not imie:
+            error = "Brakuje imienia nauczyciela."
+        elif not nazwisko:
+            error = "Brakuje nazwiska nauczyciela."
+        elif not email:
+            error = "Brakuje adresu e-mail."
+
+        if error is not None:
+            print(error)
+            flash(error)
+        else:
+            #dodawanie nauczyciela
+            db.execute(
+                'INSERT INTO nauczyciele '
+                '(imie, nazwisko, email, obecny) '
+                'VALUES (?, ?, ?, ?)',
+                (imie, nazwisko, email, obecny) #czy można tak beztrosko "obecny"?
+            )
+            db.commit()
+            return redirect(url_for('admin.dodaj_nauczyciela'))
+        
+    return render_template('admin/add.thml')
 
 # Interface logowania
-@bp.route('/admin/login', methods=('GET', 'POST'))
+@bp.route('/login', methods=('GET', 'POST'))
 def login():
     if request.method == 'POST':
         # username = request.method.get('username')
