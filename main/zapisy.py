@@ -80,6 +80,7 @@ def nauczyciel(id):
                 (id, imie_rodzica, nazwisko_rodzica, email, imie_ucznia, nazwisko_ucznia, godzina)
             )
             db.commit()
+            #Trzeba zrobić cokolwiek, żeby było widać, że rezerwacja terminu jest udana.
             return redirect(url_for('index'))
 
     # Ustawienie wszystkich dat
