@@ -5,9 +5,27 @@
 {% block scripts %}
     {{ super() }}
 
+    <script src="/static/search.js"></script>
+
     <script>
         $(document).ready(function(){ M.AutoInit(); });
-        $(document).ready(function(){ $('.timepicker').timepicker(); });
+
+        var teachers = [
+            {% for n in nauczyciele %}
+                {'name':'{{n.imie}} {{n.nazwisko}}', 'fname':'{{n.imie}}', 'lname':'{{n.nazwisko}}',
+                    'rendered':  '<li class="collection-item"> <div>{{n.imie}} {{n.nazwisko}}<a href="/admin/nauczyciel/{{n.id}}" '+
+                    'class="secondary-content"><i class="material-icons">edit</i></a></div> </li>'
+                },
+            {% endfor %}
+        ];
+
+        var empty = '<li class="collection-item red-text">Nie znaleziono nauczyciela.</li>';
+
+        function search_input() {
+            $('#teachers').html(search($('#search').val(), teachers, empty));
+        }
+
+        $('body').ready(function(){search_input()});
     </script>
 {% endblock scripts %}
 
@@ -55,13 +73,8 @@
                  <div class="card-content grey-text text-darken-2 container">
                      <span class="card-title">Nauczyciele</span>
                      <div class="row">
-                        <ul class="collection">
-                            {% for n in nauczyciele %}
-                                <li class="collection-item">
-                                    <div>{{n.imie}} {{n.nazwisko}}<a href="/admin/nauczyciel/{{n.id}}" class="secondary-content"><i class="material-icons">edit</i></a></div>
-                                </li>
-                            {% endfor %}
-                        </ul>
+                         <input type="text" id="search" oninput="search_input();" placeholder="Wyszukaj nauczyciela"/>
+                         <ul class="collection" id="teachers"></ul>
                      </div>
                  </div>
             </div>
