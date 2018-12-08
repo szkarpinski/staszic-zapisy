@@ -3,7 +3,7 @@ import configparser
 import click
 import os
 from flask import (
-    Blueprint, render_template, session, redirect, url_for, current_app
+    Blueprint, render_template, session, redirect, url_for, current_app, request, flash
 )
 from flask.cli import with_appcontext
 from main.db import get_db
@@ -17,7 +17,7 @@ bp = Blueprint('admin', __name__, url_prefix='/admin')
 def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
-        if not session.get('admin'):
+        if session.get('user') != 'admin':
             return redirect(url_for('admin.login'))
 
         return view(**kwargs)
@@ -108,18 +108,21 @@ def dodaj_nauczyciela():
 def login():
     if request.method == 'POST':
         # username = request.method.get('username')
-        password = request.method.get('password')
+        password = request.form.get('password')
         conf = configparser.ConfigParser()
         conf.read(os.path.join(current_app.instance_path, 'config.ini'))
-        # error = None
+        error = None
+
         if not check_password_hash(conf['admin']['hash'], password):
-            error = 'Nieprawidłowe hasło daministratora!'
+            error = 'Nieprawidłowe hasło administratora!'
 
         if error is None:
             session.clear()
             session['user'] = 'admin'
-            return redirect(url_for('index'))
-        flash(error)
+            return redirect(url_for('admin.admin'))
+        else:
+            flash(error)
+
     return render_template('admin/login.html')
 
 
