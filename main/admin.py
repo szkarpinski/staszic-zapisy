@@ -56,7 +56,7 @@ def admin_nauczyciel(id):
     #Lista zapisów dla nauczyciela
     terminy = db.execute(
         'SELECT imie_ucznia, nazwisko_ucznia, imie_rodzica, nazwisko_rodzica, godzina '
-        'FROM wizyty WHERE id = ?', (id,)
+        'FROM wizyty WHERE id_nauczyciela = ?', (id,)
     ).fetchall()
     nauczyciel = db.execute(
         'SELECT imie, nazwisko, email, obecny FROM nauczyciele WHERE id = ?',(id,)
