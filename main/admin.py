@@ -30,19 +30,42 @@ def login_required(view):
 @login_required
 def admin():
     db = get_db()
+    conf = configparser.ConfigParser()
+    conf.read(os.path.join(current_app.instance_path, 'config.ini'))
+    
     if request.method == 'POST':
-        pass
+        date = request.form.get('date')
+        start = request.form.get('start')
+        end = request.form.get('end')
+        interval = request.form.get('interval')
+        message = "Ustawiono: "
+        print(date, start, end, interval)
+        if date:
+            message += "datę, "
+            
+        if start:
+            message += "początek, "
+        if end:
+            message += "koniec, "
+        if interval:
+            message += "czas trwania spotkania, "
+            
+        if message == "Ustawiono: ":
+            message = "Nic nie zmieniono"
+        else:
+            message = message[:-2]
+            with open(os.path.join(current_app.instance_path,
+                                   'config.ini'), 'w') as confile:
+                conf.write(confile)
+        print(message)
+
+        
 
     #Lista nauczycieli
     nauczyciele = db.execute(
         'SELECT id, imie, nazwisko, email, obecny FROM nauczyciele'
     ).fetchall()
 
-    #Opcje
-    conf = configparser.ConfigParser()
-    conf.read(os.path.join(current_app.instance_path, 'config.ini'))
-    
-    
     return render_template('admin/panel.html', nauczyciele = nauczyciele)
 
 #Interfejs ustawień - szczegóły nauczyciela
