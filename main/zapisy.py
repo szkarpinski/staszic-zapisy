@@ -12,7 +12,7 @@ from werkzeug.exceptions import abort
 bp = Blueprint('zapisy', __name__)
 
 
-# Index, w którym da się zobaczyć podsumowanie nauczycieli
+# Index, w którym da się zobaczyć podsumowanie nauczycieli
 @bp.route('/')
 def index():
     db = get_db()
@@ -43,17 +43,17 @@ def nauczyciel(id):
         error = None
 
         if not imie_ucznia:
-            error = "Brakuje imienia ucznia."
+            error += "Brakuje imienia ucznia."
         elif not nazwisko_ucznia:
-            error = "Brakuje nazwiska ucznia."
+            error += "Brakuje nazwiska ucznia."
         elif not email:
-            error = "Brakuje adresu e-mail."
+            error += "Brakuje adresu e-mail."
         elif not imie_rodzica:
-            error = "Brakuje imienia rodzica."
+            error += "Brakuje imienia rodzica."
         elif not nazwisko_rodzica:
-            error = "Brakuje nazwiska rodzica."
+            error += "Brakuje nazwiska rodzica."
         elif not rodo:
-            error = "Brakuje zgody na przetwarzanie danych osobowych."
+            error += "Brakuje zgody na przetwarzanie danych osobowych."
         # Trzeba zrobić jakoś transakcje
         elif not db.execute('SELECT obecny FROM nauczyciele WHERE id = ?',
                             (id,)).fetchone()['obecny']:

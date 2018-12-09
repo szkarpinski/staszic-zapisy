@@ -41,6 +41,7 @@ def admin():
         interval = request.form.get('interval')
         message = "Ustawiono: "
         print(date, start, end, interval)
+        
         if date:
             message += "datę, "
             conf['dzien otwarty']['data'] = dt.datetime.strptime(
@@ -55,6 +56,7 @@ def admin():
             message += "czas trwania spotkania, "
             conf['dzien otwarty']['blok'] = "{}:{}".format(
                 int(interval) // 60, int(interval) % 60)
+            
         if message == "Ustawiono: ":
             message = "Nic nie zmieniono"
         else:
@@ -63,8 +65,7 @@ def admin():
                                    'config.ini'), 'w') as confile:
                 conf.write(confile)
         print(message)
-
-        
+        flash(message)
 
     #Lista nauczycieli
     nauczyciele = db.execute(
@@ -79,6 +80,7 @@ def admin():
 def admin_nauczyciel(id):
     db = get_db()
     if request.method == 'POST':
+        #TODO po zrobieniu templatea
         pass
 
     #Lista zapisów dla nauczyciela
