@@ -2,6 +2,7 @@ import functools
 import configparser
 import click
 import os
+import datetime as dt
 from flask import (
     Blueprint, render_template, session, redirect, url_for, current_app, request, flash
 )
@@ -42,14 +43,18 @@ def admin():
         print(date, start, end, interval)
         if date:
             message += "datę, "
-            
+            conf['dzien otwarty']['data'] = dt.datetime.strptime(
+                date, '%d.%m.%Y').strftime("%d/%m/%Y")
         if start:
             message += "początek, "
+            conf['dzien otwarty']['start'] = start
         if end:
             message += "koniec, "
+            conf['dzien otwarty']['koniec'] = end
         if interval:
             message += "czas trwania spotkania, "
-            
+            conf['dzien otwarty']['blok'] = "{}:{}".format(
+                int(interval) // 60, int(interval) % 60)
         if message == "Ustawiono: ":
             message = "Nic nie zmieniono"
         else:
