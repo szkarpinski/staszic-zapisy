@@ -8,7 +8,16 @@
     <script src="/static/search.js"></script>
 
     <script>
-        $(document).ready(function(){ M.AutoInit(); });
+
+          document.addEventListener('DOMContentLoaded', function() {
+            var elems = document.querySelectorAll('.datepicker');
+            var instances = M.Datepicker.init(elems, {format: 'dd.mm.yyyy'});
+          });
+
+            document.addEventListener('DOMContentLoaded', function() {
+                var elems = document.querySelectorAll('.timepicker');
+                var instances = M.Timepicker.init(elems, {twelveHour: false });
+            });
 
         var teachers = [
             {% for n in nauczyciele %}
