@@ -34,7 +34,7 @@ def admin():
     conf = configparser.ConfigParser()
     conf.read(os.path.join(current_app.instance_path, 'config.ini'))
     dane_dnia = conf['dzien otwarty']
-    
+
     if request.method == 'POST':
         date = request.form.get('date')
         start = request.form.get('start')
@@ -45,8 +45,7 @@ def admin():
         
         if date:
             message += "datę, "
-            dane_dnia['data'] = dt.datetime.strptime(
-                date, '%d.%m.%Y').strftime("%d/%m/%Y")
+            dane_dnia['data'] = date.replace('.', '/')
         if start:
             if start > (end if end else dane_dnia['koniec']):
                 message += 'początek (zła wartość), '
@@ -91,7 +90,13 @@ def admin():
         'SELECT id, imie, nazwisko, email, obecny FROM nauczyciele'
     ).fetchall()
 
-    return render_template('admin/panel.html', nauczyciele = nauczyciele, ustawienia_czasu=dane_dnia)
+    ustawienia_czasu = {}
+    ustawienia_czasu['date'] = dane_dnia['data'].replace('/', '.')
+    ustawienia_czasu['start'] = dane_dnia['start']
+    ustawienia_czasu['end'] = dane_dnia['koniec']
+    ustawienia_czasu['interval'] = dane_dnia['blok']
+
+    return render_template('admin/panel.html', nauczyciele = nauczyciele, ustawienia_czasu=ustawienia_czasu)
 
 #Interfejs ustawień - szczegóły nauczyciela
 @bp.route('/nauczyciel/<int:id>', methods=('GET', 'POST'))
