@@ -1,4 +1,49 @@
-{% extends "base.html" %}
+{% extends "admin/admin_base.html" %}
 
 {% block title %}Edytuj nauczyciela{% endblock title %}
 
+{% block scripts %}
+    {{ super() }}
+{% endblock scripts %}
+
+{% block content %}
+    {{  super() }}
+
+    <div class="row">
+        <div class="col s12">
+            <div class="card white">
+                 <div class="card-content grey-text text-darken-2 container">
+                     <span class="card-title">Edycja nauczyciela</span>
+                     <form method="post">
+                         <div class="row">
+                             <div class="col s6">
+                                <input name="fname" id="fname" type="text" value="{{ nauczyciel.imie }}"/>
+                                <label for="fname">Imię</label>
+                             </div>
+                             <div class="col s6">
+                                 <input name="lname" id="lname" type="text" value="{{ nauczyciel.nazwisko }}"/>
+                                 <label for="lname">Nazwisko</label>
+                             </div>
+                         </div>
+                         <div class="row">
+                             <div class="col s6">
+                                <input name="email" id="email" type="text" value="{{ nauczyciel.email }}"/>
+                                 <label for="email">Adres e-mail</label>
+                             </div>
+                             <div class="col s6">
+                                <label>
+                                    <input name="present" id="present" type="checkbox" {% if nauczyciel.obecny %}checked{% endif %}/>
+                                    <span>Obecny</span>
+                                </label>
+                             </div>
+                         </div>
+                         <div class="row">
+                             <input type="submit" class="btn" value="Zapisz"/>
+                         </div>
+                     </form>
+                 </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
