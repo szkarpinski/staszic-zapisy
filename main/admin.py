@@ -91,7 +91,7 @@ def admin():
         'SELECT id, imie, nazwisko, email, obecny FROM nauczyciele'
     ).fetchall()
 
-    return render_template('admin/panel.html', nauczyciele = nauczyciele)
+    return render_template('admin/panel.html', nauczyciele = nauczyciele, ustawienia_czasu=dane_dnia)
 
 #Interfejs ustawień - szczegóły nauczyciela
 @bp.route('/nauczyciel/<int:id>', methods=('GET', 'POST'))
