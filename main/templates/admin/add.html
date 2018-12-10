@@ -1,0 +1,52 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}Edytuj nauczyciela{% endblock title %}
+
+{% block scripts %}
+    {{ super() }}
+{% endblock scripts %}
+
+{% block content %}
+    {{  super() }}
+
+    <div class="row">
+        <div class="col s12">
+            <div class="card white">
+                 <div class="card-content grey-text text-darken-2 container">
+                     <span class="card-title">Dodawanie nauczyciela</span>
+                     <form method="post">
+                         <div class="row">
+                             <div class="col s6">
+                                <input name="fname" id="fname" type="text"/>
+                                <label for="fname">Imię</label>
+                             </div>
+                             <div class="col s6">
+                                 <input name="lname" id="lname" type="text"/>
+                                 <label for="lname">Nazwisko</label>
+                             </div>
+                         </div>
+                         <div class="row">
+                             <div class="col s6">
+                                <input name="email" id="email" type="text"/>
+                                 <label for="email">Adres e-mail</label>
+                             </div>
+                             <div class="col s6">
+                                <label>
+                                    <input name="present" id="present" type="checkbox"/>
+                                    <span>Obecny</span>
+                                </label>
+                             </div>
+                         </div>
+                         <div class="row">
+                             <div class="col s6 offset-s6 right-align">
+                                <a class="btn" href="/admin">Wróć</a>
+                                <input type="submit" class="btn" value="Dodaj"/>
+                             </div>
+                         </div>
+                     </form>
+                 </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

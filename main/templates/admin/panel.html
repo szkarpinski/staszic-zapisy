@@ -82,8 +82,16 @@
                  <div class="card-content grey-text text-darken-2 container">
                      <span class="card-title">Nauczyciele</span>
                      <div class="row">
-                         <input type="text" id="search" oninput="search_input();" placeholder="Wyszukaj nauczyciela"/>
-                         <ul class="collection" id="teachers"></ul>
+                         <div class="col s8">
+                            <input type="text" id="search" oninput="search_input();" placeholder="Wyszukaj nauczyciela"/>
+                         </div>
+                         <div class="col s4 right-align">
+                             <a class="btn right-align" href="/admin/dodaj">Dodaj nauczyciela</a>
+                         </div>
+                     </div>
+                        <div class="row">
+                            <ul class="collection" id="teachers"></ul>
+                        </div>
                      </div>
                  </div>
             </div>
