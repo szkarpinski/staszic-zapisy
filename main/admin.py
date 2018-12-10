@@ -150,7 +150,7 @@ def dodaj_nauczyciela():
             db.commit()
             return redirect(url_for('admin.dodaj_nauczyciela'))
         
-    return render_template('admin/add.thml')
+    return render_template('admin/add.html')
 
 # Interface logowania
 @bp.route('/login', methods=('GET', 'POST'))
