@@ -40,18 +40,18 @@ def nauczyciel(id):
         email = request.form.get('email')
         godzina = request.form.get('hour')
         rodo = request.form.get('rodo')
-        error = None
+        error = ''
 
         if not imie_ucznia:
             error += "Brakuje imienia ucznia."
         elif not nazwisko_ucznia:
             error += "Brakuje nazwiska ucznia."
-        elif not email:
-            error += "Brakuje adresu e-mail."
         elif not imie_rodzica:
             error += "Brakuje imienia rodzica."
         elif not nazwisko_rodzica:
             error += "Brakuje nazwiska rodzica."
+        elif not email:
+            error += "Brakuje adresu e-mail."
         elif not rodo:
             error += "Brakuje zgody na przetwarzanie danych osobowych."
         # Trzeba zrobić jakoś transakcje
@@ -65,7 +65,7 @@ def nauczyciel(id):
                 error = 'Godzina jest już zajęta.'
 
 
-        if error is not None:
+        if error:
             print(error)
             flash(error)
         else:          

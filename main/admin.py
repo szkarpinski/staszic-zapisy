@@ -33,6 +33,7 @@ def admin():
     db = get_db()
     conf = configparser.ConfigParser()
     conf.read(os.path.join(current_app.instance_path, 'config.ini'))
+    dane_dnia = conf['dzien otwarty']
     
     if request.method == 'POST':
         date = request.form.get('date')
@@ -44,18 +45,36 @@ def admin():
         
         if date:
             message += "datę, "
-            conf['dzien otwarty']['data'] = dt.datetime.strptime(
+            dane_dnia['data'] = dt.datetime.strptime(
                 date, '%d.%m.%Y').strftime("%d/%m/%Y")
         if start:
-            message += "początek, "
-            conf['dzien otwarty']['start'] = start
+            if start > (end if end else dane_dnia['koniec']):
+                message += 'początek (zła wartość), '
+            else:
+                message += "początek, "
+                dane_dnia['start'] = start
         if end:
-            message += "koniec, "
-            conf['dzien otwarty']['koniec'] = end
+            if end < dane_dnia['start']:
+                message += 'koniec (zła wartość), '
+            else:
+                message += "koniec, "
+                dane_dnia['koniec'] = end
         if interval:
-            message += "czas trwania spotkania, "
-            conf['dzien otwarty']['blok'] = "{}:{}".format(
-                int(interval) // 60, int(interval) % 60)
+            interval = int(interval)
+            duration = dt.datetime.strptime(
+                         dane_dnia['data'] +
+                         dane_dnia['koniec'],
+                         '%d/%m/%Y%H:%M') - \
+                       dt.datetime.strptime(
+                         dane_dnia['data'] +
+                         dane_dnia['start'],
+                         '%d/%m/%Y%H:%M')
+            if interval <= 0 or interval > duration.seconds / 60:
+                message += "czas trwania spotkania (zła wartość), "
+            else:
+                message += "czas trwania spotkania, "
+                dane_dnia['blok'] = "{}:{}".format(
+                    int(interval) // 60, int(interval) % 60)
             
         if message == "Ustawiono: ":
             message = "Nic nie zmieniono"
@@ -77,7 +96,7 @@ def admin():
 #Interfejs ustawień - szczegóły nauczyciela
 @bp.route('/nauczyciel/<int:id>', methods=('GET', 'POST'))
 @login_required
-def admin_nauczyciel(id):
+def nauczyciel(id):
     db = get_db()
     if request.method == 'POST':
         #TODO po zrobieniu templatea
