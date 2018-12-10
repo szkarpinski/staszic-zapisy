@@ -42,22 +42,26 @@ def admin():
         interval = request.form.get('interval')
         message = "Ustawiono: "
         print(date, start, end, interval)
-        
+
+        zmieniono = False
         if date:
             message += "datę, "
             dane_dnia['data'] = date.replace('.', '/')
+            zmieniono = True
         if start:
             if start > (end if end else dane_dnia['koniec']):
                 message += 'początek (zła wartość), '
             else:
                 message += "początek, "
                 dane_dnia['start'] = start
+                zmieniono = True
         if end:
             if end < dane_dnia['start']:
                 message += 'koniec (zła wartość), '
             else:
                 message += "koniec, "
                 dane_dnia['koniec'] = end
+                zmieniono = True
         if interval:
             interval = int(interval)
             duration = dt.datetime.strptime(
@@ -74,6 +78,7 @@ def admin():
                 message += "czas trwania spotkania, "
                 dane_dnia['blok'] = "{}:{}".format(
                     int(interval) // 60, int(interval) % 60)
+                zmieniono = True
             
         if message == "Ustawiono: ":
             message = "Nic nie zmieniono"
@@ -84,6 +89,10 @@ def admin():
                 conf.write(confile)
         print(message)
         flash(message)
+
+        # Reset bazy wizyt po zmianie danych czasowych
+        if zmieniono:
+            db.execute('DELETE * FROM wizyty')
 
     #Lista nauczycieli
     nauczyciele = db.execute(
