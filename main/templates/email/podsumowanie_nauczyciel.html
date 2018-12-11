@@ -1,0 +1,17 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        Dzień dobry,<br/>
+        Na najbliższym dniu otwartym na spotkania zapisali się następujący rodzice:<br/>
+        <ul>
+            {% for wizyta in wizyty %}
+                <li>
+                    {{ wizyta.imie_rodzica }} {{ wizyta.nazwisko_rodzica }} (uczeń: {{ wizyta.imie_ucznia }} {{ wizyta.nazwisko_ucznia }})
+                    o godzinie {{  wizyta.godzina }}
+                </li>
+            {% endfor %}
+        </ul>
+    </body>
+</html>
