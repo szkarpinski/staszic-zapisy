@@ -92,7 +92,7 @@ def admin():
 
         # Reset bazy wizyt po zmianie danych czasowych
         if zmieniono:
-            db.execute('DELETE * FROM wizyty')
+            db.execute('DELETE FROM wizyty')
             db.commit()
 
     #Lista nauczycieli
@@ -117,16 +117,17 @@ def admin():
 def nauczyciel(id):
     db = get_db()
     if request.method == 'POST':
-        
+        print("POST osiagniety")
+        '''
         if request.form.get('delete'):
             db.execute('DELETE FROM nauczyciele WHERE id = ?', (id,))
             return redirect(url_for('admin.admin'))
-
+        '''
         imie = request.form.get('fname')
         nazwisko = request.form.get('lname')
         email = request.form.get('email')
         obecny = request.form.get('present')
-
+        print(imie, nazwisko, email, obecny)
         error = None
         if imie is None:
             error = 'Puste imie.'
@@ -137,13 +138,14 @@ def nauczyciel(id):
         
         if error is not None:
             flash(error)
-            print(error)
+            print("błąd:"+error)
         else:
             db.execute('UPDATE nauczyciele '
                        'SET imie = ?, nazwisko = ?, email = ?, obecny = ? '
                        'WHERE id = ?',
                        (imie, nazwisko, email, 1 if obecny=='on' else 0, id))
             db.commit()
+            print("Zmieniono")
 
     #Lista zapisów dla nauczyciela
     terminy = db.execute(
