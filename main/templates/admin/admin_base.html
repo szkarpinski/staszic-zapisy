@@ -1,12 +1,17 @@
 {%  extends "base.html" %}
 
-{% block content %}
-    <br>
-    <div class="row">
-        <div class="col s2 offset-s10 right-align">
-            <a class="btn" href="/admin/logout">
-                Wyloguj się
-            </a>
+{% block container %}
+    <div class="container">
+        <br>
+        <div class="row">
+            <div class="col s2 offset-s10 right-align">
+                <a class="btn" href="/admin/logout">
+                    Wyloguj się
+                </a>
+            </div>
         </div>
+        {% block content %}
+
+        {% endblock content %}
     </div>
-{% endblock %}
+{% endblock container%}
