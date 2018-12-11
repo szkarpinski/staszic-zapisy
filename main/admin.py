@@ -92,7 +92,7 @@ def admin():
 
         # Reset bazy wizyt po zmianie danych czasowych
         if zmieniono:
-            db.execute('DELETE * FROM wizyty')
+            db.execute('DELETE FROM wizyty')
             db.commit()
 
     #Lista nauczycieli
