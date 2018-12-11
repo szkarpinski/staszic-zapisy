@@ -104,7 +104,10 @@ def admin():
     ustawienia_czasu['date'] = dane_dnia['data'].replace('/', '.')
     ustawienia_czasu['start'] = dane_dnia['start']
     ustawienia_czasu['end'] = dane_dnia['koniec']
-    ustawienia_czasu['interval'] = dane_dnia['blok']
+
+    def minutes(hm):
+        return int(hm.split(':')[0])*60+int(hm.split(':') [1])
+    ustawienia_czasu['interval'] = minutes(dane_dnia['blok'])
 
     return render_template('admin/panel.html', nauczyciele = nauczyciele, ustawienia_czasu=ustawienia_czasu)
 
