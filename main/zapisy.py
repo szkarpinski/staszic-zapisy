@@ -33,6 +33,10 @@ def nauczyciel(id):
     conf = configparser.ConfigParser()
     conf.read(os.path.join(current_app.instance_path, 'config.ini'))
 
+    dane_nauczyciela = db.execute(
+        'SELECT imie, nazwisko, obecny FROM nauczyciele WHERE id = ?', (id,)
+    ).fetchone()
+
     # Przetwarzanie zapytania (rezerwacji godziny)
     if request.method == 'POST':
         imie_ucznia = request.form.get('sfname')
@@ -57,8 +61,7 @@ def nauczyciel(id):
         elif not rodo:
             error += "Brakuje zgody na przetwarzanie danych osobowych."
         # Trzeba zrobić jakoś transakcje
-        elif not db.execute('SELECT obecny FROM nauczyciele WHERE id = ?',
-                            (id,)).fetchone()['obecny']:
+        elif not dane_nauczyciela['obecny']:
             error = 'Nauczyciel nie będzie obecny na dniu otwartym.'
         else:
             if db.execute('SELECT * FROM wizyty '
@@ -90,6 +93,7 @@ def nauczyciel(id):
                                      slname=nazwisko_ucznia,
                                      hour=godzina,
                                      date=conf['dzien otwarty']['data'],
+                                     dane_nauczyciela=dane_nauczyciela,
                 ),
                 recipients=[email]
             )
@@ -116,9 +120,6 @@ def nauczyciel(id):
     zajete = [dt.datetime.strptime(
         conf['dzien otwarty']['data'] + ' ' + r['godzina'], '%d/%m/%Y %H:%M')
         for r in zajete]
-    dane_nauczyciela = db.execute(
-        'SELECT imie, nazwisko, obecny FROM nauczyciele WHERE id = ?', (id,)
-    ).fetchone()
     if dane_nauczyciela is None:
         abort(404, 'Nauczyciel o podanym ID {0} nie znaleziony :(('.format(id))
     elif not dane_nauczyciela['obecny']:
