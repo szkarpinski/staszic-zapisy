@@ -113,8 +113,27 @@ def admin():
 def nauczyciel(id):
     db = get_db()
     if request.method == 'POST':
-        #TODO po zrobieniu templatea
-        pass
+        imie = request.form.get('fname')
+        nazwisko = request.form.get('lname')
+        email = request.form.get('email')
+        obecny = request.form.get('present')
+
+        error = None
+        if imie is None:
+            error = 'Puste imie.'
+        elif nazwisko is None:
+            error = 'Puste nazwisko.'
+        elif email is None:
+            error = 'Pusty email.'
+        
+        if error is not None:
+            flash(error)
+            print(error)
+        else:
+            db.execute('UPDATE nauczyciele '
+                       'SET imie = ?, nazwisko = ?, email = ?, obecny = ? '
+                       'WHERE id = ?',
+                       (imie, nazwisko, email, int(obecny), id))
 
     #Lista zapisów dla nauczyciela
     terminy = db.execute(
