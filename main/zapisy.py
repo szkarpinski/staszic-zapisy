@@ -7,7 +7,7 @@ from flask import (
 from main import mail
 from main.db import get_db
 from werkzeug.exceptions import abort
-
+import _thread
 
 bp = Blueprint('zapisy', __name__)
 
@@ -84,19 +84,24 @@ def nauczyciel(id):
             db.commit()
             
             # Wysyłanie maila potwierdzającego
-            mail.send_message(
-                subject='Dzień otwarty {}'.format(conf['dzien otwarty']['data']),
-                html=render_template('email/potwierdzenie.html',
-                                     pfname=imie_rodzica,
-                                     plname=nazwisko_rodzica,
-                                     sfname=imie_ucznia,
-                                     slname=nazwisko_ucznia,
-                                     hour=godzina,
-                                     date=conf['dzien otwarty']['data'],
-                                     dane_nauczyciela=dane_nauczyciela,
-                ),
-                recipients=[email]
-            )
+            def send_mail(app):
+                with app.app_context():
+                    mail.send_message(
+                        subject='Dzień otwarty {}'.format(conf['dzien otwarty']['data']),
+                        html=render_template('email/potwierdzenie.html',
+                                             pfname=imie_rodzica,
+                                             plname=nazwisko_rodzica,
+                                             sfname=imie_ucznia,
+                                             slname=nazwisko_ucznia,
+                                             hour=godzina,
+                                             date=conf['dzien otwarty']['data'],
+                                             dane_nauczyciela=dane_nauczyciela,
+                        ),
+                        recipients=[email]
+                    )
+                #todo: handle & log errors
+
+            _thread.start_new_thread(send_mail, (current_app._get_current_object(),))
 
             return redirect(url_for('index'))
 
