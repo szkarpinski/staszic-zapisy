@@ -9,11 +9,13 @@
             $('#delbutton').css('display', 'none');
             $('#delwarning').css('display', 'block');
             $('#delete').attr('value', 'true');
+            $("#teacher_config").find('input').prop('disabled', true);
         }
         function undel() {
             $('#delbutton').css('display', 'block');
             $('#delwarning').css('display', 'none');
             $('#delete').attr('value', 'false');
+            $("#teacher_config").find('input').prop('disabled', false);
         }
     </script>
 {% endblock scripts %}
@@ -25,6 +27,7 @@
                  <div class="card-content grey-text text-darken-2 container">
                      <span class="card-title">Edycja nauczyciela</span>
                      <form method="post">
+                        <div id="teacher_config">
                          <div class="row">
                              <div class="col s6">
                                 <input name="fname" id="fname" type="text" value="{{ nauczyciel.imie }}"/>
@@ -47,6 +50,7 @@
                                 </label>
                              </div>
                          </div>
+                        </div>
                          <div class="row">
                              <div class="col s6">
                                  <input type="hidden" name="delete" id="delete" value="false"/>
