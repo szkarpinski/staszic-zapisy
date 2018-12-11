@@ -1,4 +1,3 @@
-import functools
 import datetime as dt
 import configparser
 import os
@@ -86,6 +85,7 @@ def nauczyciel(id):
             
             # Wysyłanie maila potwierdzającego
             mail.send_message(
+                subject='Dzień otwarty {}'.format(conf['dzien otwarty']['data']),
                 html=render_template('email/potwierdzenie.html',
                                      pfname=imie_rodzica,
                                      plname=nazwisko_rodzica,
