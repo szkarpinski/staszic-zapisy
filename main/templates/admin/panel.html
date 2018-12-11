@@ -47,17 +47,17 @@
                      <form method="post">
                          <div class="row">
                              <div class="col s6">
-                                <input name="date" id="date" type="text" class="datepicker" value="{{ request.form['date'] }}"/>
+                                <input name="date" id="date" type="text" class="datepicker" value="{{ ustawienia_czasu['date'] }}"/>
                                 <label for="date">Data</label>
                              </div>
                              <div class="col s6">
-                                 <input name="start" id="start" type="text" class="timepicker" value="{{ request.form['start'] }}"/>
+                                 <input name="start" id="start" type="text" class="timepicker" value="{{ ustawienia_czasu['start'] }}"/>
                                  <label for="start">Początek</label>
                              </div>
                          </div>
                          <div class="row">
                              <div class="col s6">
-                                <input name="end" id="end" type="text" class="timepicker" value="{{ request.form['end'] }}"/>
+                                <input name="end" id="end" type="text" class="timepicker" value="{{ ustawienia_czasu['end'] }}"/>
                                  <label for="end">Koniec</label>
                              </div>
                              <div class="col s6">
