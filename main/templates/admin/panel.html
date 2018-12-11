@@ -66,7 +66,16 @@
                              </div>
                          </div>
                          <div class="row">
-                             <input type="submit" class="btn" value="Zapisz"/>
+                            <div class="col s8 red-text" id="errors">
+                                {% with messages = get_flashed_messages() %}
+                                    {% if messages %}
+                                        {{ messages[0] }}
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
+                            <div class="col s4 right">
+                                <input type="submit" class="btn" value="Zapisz"/>
+                            </div>
                          </div>
                      </form>
                  </div>
