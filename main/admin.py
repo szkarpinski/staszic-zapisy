@@ -93,6 +93,7 @@ def admin():
         # Reset bazy wizyt po zmianie danych czasowych
         if zmieniono:
             db.execute('DELETE * FROM wizyty')
+            db.commit()
 
     #Lista nauczycieli
     nauczyciele = db.execute(
@@ -133,7 +134,8 @@ def nauczyciel(id):
             db.execute('UPDATE nauczyciele '
                        'SET imie = ?, nazwisko = ?, email = ?, obecny = ? '
                        'WHERE id = ?',
-                       (imie, nazwisko, email, int(obecny), id))
+                       (imie, nazwisko, email, 1 if obecny=='on' else 0, id))
+            db.commit()
 
     #Lista zapisów dla nauczyciela
     terminy = db.execute(
@@ -178,7 +180,7 @@ def dodaj_nauczyciela():
                 'INSERT INTO nauczyciele '
                 '(imie, nazwisko, email, obecny) '
                 'VALUES (?, ?, ?, ?)',
-                (imie, nazwisko, email, obecny) #czy można tak beztrosko "obecny"?
+                (imie, nazwisko, email, 1 if obecny=='on' else 0)
             )
             db.commit()
             return redirect(url_for('admin.dodaj_nauczyciela'))
