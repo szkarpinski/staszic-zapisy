@@ -23,7 +23,9 @@ def index():
     ).fetchall()
     
     # View
-    return render_template('zapisy/index.html', nauczyciele=nauczyciele)
+    return render_template('zapisy/index.html', nauczyciele=nauczyciele,
+                           show_success=1
+    )
     
 # View wyboru godziny do zapisu
 @bp.route('/nauczyciel/<int:id>', methods=('GET', 'POST'))
