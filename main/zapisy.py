@@ -32,7 +32,6 @@ def nauczyciel(id):
 
     # Przetwarzanie zapytania (rezerwacji godziny)
     if request.method == 'POST':
-        for key in request.form.keys(): print(key)
         imie_ucznia = request.form.get('sfname')
         nazwisko_ucznia = request.form.get('slname')
         imie_rodzica = request.form.get('pfname')
@@ -78,7 +77,9 @@ def nauczyciel(id):
                 (id, imie_rodzica, nazwisko_rodzica, email, imie_ucznia, nazwisko_ucznia, godzina)
             )
             db.commit()
-            #Trzeba zrobić cokolwiek, żeby było widać, że rezerwacja terminu jest udana.
+            
+            # Wysyłanie maila potwierdzającego
+
             return redirect(url_for('index'))
 
     # Ustawienie wszystkich dat
@@ -112,7 +113,6 @@ def nauczyciel(id):
         abort(404,
               'Nauczyciel o podanym ID {0} '
               'nie będzie obecny na dniu otwartym. :(('.format(id))
-    # print (dane_nauczyciela['imie'], dane_nauczyciela['nazwisko'])
 
     # Liczenie wolnych godzin
     rozklad = []
