@@ -1,15 +1,19 @@
 import configparser
 import click
-from flask import render_template
-from main.db import get_db
+import sqlite3
+import os
+from flask import render_template, current_app
+from flask.cli import with_appcontext
 from main import mail
 
 
 # Komenda do wywołania przez crona
 @click.command('send-mail')
+@with_appcontext
 def send_mails():
-    db = get_db()
-    conf = configparser.Configparser()
+    db = sqlite3.connect(os.path.join(current_app.instance_path, 'main.sqlite'))
+    db.row_factory = sqlite3.Row
+    conf = configparser.ConfigParser()
     conf.read(os.path.join(current_app.instance_path, 'config.ini'))
 
 
@@ -17,7 +21,7 @@ def send_mails():
                          'FROM wizyty '
                          'GROUP BY email_rodzica').fetchall()
     for rodzic in rodzice:
-        rodzic = rodzic['email']
+        rodzic = rodzic['email_rodzica']
         wizyty = db.execute('SELECT * '
                             'FROM wizyty w JOIN nauczyciele n '
                             'ON n.id=w.id_nauczyciela '
@@ -28,8 +32,8 @@ def send_mails():
         mail.send_message(
             subject='Podsumowanie zapisów na dzień otwarty {}'.format(conf['dzien otwarty']['data']),
             html=render_template('email/podsumowanie_rodzic.html',
-                                 wizyty=wizyty)),
-            recipients=[rodzic]
+                                 wizyty=wizyty),
+            recipients=[rodzic],
         )
     
     nauczyciele = db.execute('SELECT * FROM nauczyciele')
@@ -39,10 +43,10 @@ def send_mails():
         mail.send_message(
             subject='Pdsumowanie zapisów na dzień otwarty {}'.format(conf['dzien otwarty']['data']),
             html=render_template('email/podsumowanie_nauczyciel.html',
-                                 wizyty=wizyty)
-            recipients=[nauczyciel['email']]
+                                 wizyty=wizyty),
+            recipients=[nauczyciel['email']],
         )
 
 
 def init_app(app):
-    app.cli.add_command(send_mail)
+    app.cli.add_command(send_mails)
