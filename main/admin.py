@@ -114,6 +114,11 @@ def admin():
 def nauczyciel(id):
     db = get_db()
     if request.method == 'POST':
+        
+        if request.form.get('delete'):
+            db.execute('DELETE FROM nauczyciele WHERE id = ?', (id,))
+            return redirect(url_for('admin.admin'))
+
         imie = request.form.get('fname')
         nazwisko = request.form.get('lname')
         email = request.form.get('email')
