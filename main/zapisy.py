@@ -5,6 +5,7 @@ import os
 from flask import (
     Blueprint, render_template, current_app, request, url_for, make_response, flash, redirect
 )
+from main import mail
 from main.db import get_db
 from werkzeug.exceptions import abort
 
@@ -29,6 +30,8 @@ def index():
 @bp.route('/nauczyciel/<int:id>', methods=('GET', 'POST'))
 def nauczyciel(id):
     db = get_db()
+    conf = configparser.ConfigParser()
+    conf.read(os.path.join(current_app.instance_path, 'config.ini'))
 
     # Przetwarzanie zapytania (rezerwacji godziny)
     if request.method == 'POST':
@@ -79,12 +82,21 @@ def nauczyciel(id):
             db.commit()
             
             # Wysyłanie maila potwierdzającego
+            mail.send_message(
+                html=render_template('email/potwierdzenie.html',
+                                     pfname=imie_rodzica,
+                                     plname=nazwisko_rodzica,
+                                     sfname=imie_ucznia,
+                                     slname=nazwisko_ucznia,
+                                     hour=godzina,
+                                     date=conf['dzien otwarty']['data'],
+                ),
+                recipients=[email]
+            )
 
             return redirect(url_for('index'))
 
     # Ustawienie wszystkich dat
-    conf = configparser.ConfigParser()
-    conf.read(os.path.join(current_app.instance_path, 'config.ini'))
     start = dt.datetime.strptime(
         conf['dzien otwarty']['data'] + ' ' + conf['dzien otwarty']['start'],
         '%d/%m/%Y %H:%M'
