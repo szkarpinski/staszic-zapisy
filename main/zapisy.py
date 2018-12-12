@@ -21,10 +21,16 @@ def index():
     nauczyciele = db.execute(
         'SELECT id, imie, nazwisko, obecny FROM nauczyciele'
     ).fetchall()
-    
+
+    # Semafor pokazywania, ze mail zostal wyslany
+    success = request.args.get('show_success')
+    if success:
+        pass
+    else:
+        success = 0
     # View
     return render_template('zapisy/index.html', nauczyciele=nauczyciele,
-                           show_success=1
+                           show_success=success
     )
     
 # View wyboru godziny do zapisu
@@ -105,7 +111,7 @@ def nauczyciel(id):
 
             _thread.start_new_thread(send_mail, (current_app._get_current_object(),))
 
-            return redirect(url_for('index'))
+            return redirect(url_for('index', show_success=1))
 
     # Ustawienie wszystkich dat
     start = dt.datetime.strptime(
