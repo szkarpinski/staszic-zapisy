@@ -30,7 +30,7 @@ def index():
         success = 0
     # View
     return render_template('zapisy/index.html', nauczyciele=nauczyciele,
-                           show_success=success
+                           show_success=int(success)
     )
     
 # View wyboru godziny do zapisu
