@@ -1,0 +1,16 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        Dzień dobry,<br/>
+        Na najbliższym dniu otwartym masz zarezerwowane następujące spotkania:<br/>
+        <ul>
+            {% for wizyta in wizyty %}
+                <li>
+                    p. {{  wizyta.imie }} {{ wizyta.nazwisko }} o godzinie {{  wizyta.godzina }}
+                </li>
+            {% endfor %}
+        </ul>
+    </body>
+</html>

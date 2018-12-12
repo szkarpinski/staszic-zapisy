@@ -104,7 +104,10 @@ def admin():
     ustawienia_czasu['date'] = dane_dnia['data'].replace('/', '.')
     ustawienia_czasu['start'] = dane_dnia['start']
     ustawienia_czasu['end'] = dane_dnia['koniec']
-    ustawienia_czasu['interval'] = dane_dnia['blok']
+
+    def minutes(hm):
+        return int(hm.split(':')[0])*60+int(hm.split(':') [1])
+    ustawienia_czasu['interval'] = minutes(dane_dnia['blok'])
 
     return render_template('admin/panel.html', nauczyciele = nauczyciele, ustawienia_czasu=ustawienia_czasu)
 
@@ -114,16 +117,17 @@ def admin():
 def nauczyciel(id):
     db = get_db()
     if request.method == 'POST':
-        
+        print("POST osiagniety")
+        '''
         if request.form.get('delete'):
             db.execute('DELETE FROM nauczyciele WHERE id = ?', (id,))
             return redirect(url_for('admin.admin'))
-
+        '''
         imie = request.form.get('fname')
         nazwisko = request.form.get('lname')
         email = request.form.get('email')
         obecny = request.form.get('present')
-
+        print(imie, nazwisko, email, obecny)
         error = None
         if imie is None:
             error = 'Puste imie.'
@@ -134,13 +138,14 @@ def nauczyciel(id):
         
         if error is not None:
             flash(error)
-            print(error)
+            print("błąd:"+error)
         else:
             db.execute('UPDATE nauczyciele '
                        'SET imie = ?, nazwisko = ?, email = ?, obecny = ? '
                        'WHERE id = ?',
                        (imie, nazwisko, email, 1 if obecny=='on' else 0, id))
             db.commit()
+            print("Zmieniono")
 
     #Lista zapisów dla nauczyciela
     terminy = db.execute(

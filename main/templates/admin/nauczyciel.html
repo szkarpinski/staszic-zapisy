@@ -4,17 +4,30 @@
 
 {% block scripts %}
     {{ super() }}
+    <script>
+        function del() {
+            $('#delbutton').css('display', 'none');
+            $('#delwarning').css('display', 'block');
+            $('#delete').attr('value', 'true');
+            $("#teacher_config").find('input').prop('disabled', true);
+        }
+        function undel() {
+            $('#delbutton').css('display', 'block');
+            $('#delwarning').css('display', 'none');
+            $('#delete').attr('value', 'false');
+            $("#teacher_config").find('input').prop('disabled', false);
+        }
+    </script>
 {% endblock scripts %}
 
 {% block content %}
-    {{  super() }}
-
     <div class="row">
         <div class="col s12">
             <div class="card white">
                  <div class="card-content grey-text text-darken-2 container">
                      <span class="card-title">Edycja nauczyciela</span>
                      <form method="post">
+                        <div id="teacher_config">
                          <div class="row">
                              <div class="col s6">
                                 <input name="fname" id="fname" type="text" value="{{ nauczyciel.imie }}"/>
@@ -37,8 +50,22 @@
                                 </label>
                              </div>
                          </div>
+                        </div>
                          <div class="row">
-                             <div class="col s6 offset-s6 right-align">
+                             <div class="col s6">
+                                 <input type="hidden" name="delete" id="delete" value="false"/>
+                                 <div id="delbutton">
+                                   <a href="#" class="btn waves-effect waves-light" onclick="del();">
+                                         <i class="material-icons left">delete</i>Usuń nauczyciela
+                                    </a>
+                                 </div>
+                                 <div id="delwarning" style="display: none">
+                                     <span class="red-text text-darken-1"><b>
+                                        Nauczyciel zostanie usunięty. Tej operacji nie da się cofnąć.
+                                    </b></span><a href="#" onclick="undel();">Kliknij, aby anulować</a>
+                                 </div>
+                             </div>
+                             <div class="col s6 right-align">
                                 <a class="btn" href="/admin">Wróć</a>
                                 <input type="submit" class="btn" value="Zapisz"/>
                              </div>

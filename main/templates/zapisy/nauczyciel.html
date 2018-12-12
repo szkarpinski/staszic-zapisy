@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "zapisy/user_base.html" %}
 
 {% block title %}{{imie}} {{nazwisko}}{% endblock title %}
 
@@ -48,11 +48,16 @@
             <div class="card white">
                 <div class="card-content grey-text text-darken-2 container">
                     <div class="row">
-                        Wybierz odpowiadającą Ci godzinę spotkania.
+                        <div class="col s8">
+                            <span class="grey-text text-darken-1" style="font-weight:bolder">Wybierz odpowiadającą Ci godzinę spotkania.</span><br/><br/>
+                        </div>
+                        <div class="col s4" style="text-align:right">
+                            <a href="/">Wróć do strony głównej</a>
+                        </div>
                     </div>
                     <div class="row">
                         {% for r in rozklad %}
-                            <div class="col s2">
+                            <div class="col s2" style="text-align:center">
                                 {% if r.wolne %}
                                     <a class="btn waves-effect waves-light meeting_header" onclick="$('#errors').empty(); expand_meeting({{loop.index0}})" href="#details">
                                         {{r.start.strftime('%H:%M')}}
