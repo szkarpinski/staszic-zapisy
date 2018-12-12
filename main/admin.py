@@ -118,16 +118,18 @@ def nauczyciel(id):
     db = get_db()
     if request.method == 'POST':
         print("POST osiagniety")
-        '''
-        if request.form.get('delete'):
+        
+        if request.form.get('delete') == 'true':
+            db.execute('DELETE FROM wizyty WHERE id_nauczyciela = ?', (id,))
             db.execute('DELETE FROM nauczyciele WHERE id = ?', (id,))
+            db.commit()
             return redirect(url_for('admin.admin'))
-        '''
+        
         imie = request.form.get('fname')
         nazwisko = request.form.get('lname')
         email = request.form.get('email')
         obecny = request.form.get('present')
-        print(imie, nazwisko, email, obecny)
+        # print(imie, nazwisko, email, obecny, request.form.get('delete'))
         error = None
         if imie is None:
             error = 'Puste imie.'
