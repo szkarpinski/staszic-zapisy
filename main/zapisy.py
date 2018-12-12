@@ -19,7 +19,7 @@ def index():
 
     # Komunikacja z bazą
     nauczyciele = db.execute(
-        'SELECT id, imie, nazwisko, obecny FROM nauczyciele'
+        'SELECT id, imie, nazwisko, obecny FROM nauczyciele ORDER BY nazwisko, imie'
     ).fetchall()
 
     # Semafor pokazywania, ze mail zostal wyslany
