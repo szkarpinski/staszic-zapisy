@@ -80,14 +80,18 @@ def nauczyciel(id):
         if error:
             print(error)
             flash(error)
-        else:          
+        else:
             # Rezerwowanie terminu
+
+            kod_potwierdzajacy_email = os.urandom(15).hex()
+
             db.execute(
                 'INSERT INTO wizyty '
                 '(id_nauczyciela, imie_rodzica, nazwisko_rodzica, email_rodzica, '
-                'imie_ucznia, nazwisko_ucznia, godzina)'
-                ' VALUES (?, ?, ?, ?, ?, ?, ?)',
-                (id, imie_rodzica, nazwisko_rodzica, email, imie_ucznia, nazwisko_ucznia, godzina)
+                'imie_ucznia, nazwisko_ucznia, godzina, potwierdzony_email, kod_potwierdzajacy_email)'
+                ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                (id, imie_rodzica, nazwisko_rodzica, email,
+                 imie_ucznia, nazwisko_ucznia, godzina, False, kod_potwierdzajacy_email)
             )
             db.commit()
             
@@ -102,6 +106,7 @@ def nauczyciel(id):
                                      hour=godzina,
                                      date=conf['dzien otwarty']['data'],
                                      dane_nauczyciela=dane_nauczyciela,
+                                     confirmation_code=kod_potwierdzajacy_email,
                 ),
                 recipients=[email]
             )
@@ -152,3 +157,20 @@ def nauczyciel(id):
                            nazwisko=dane_nauczyciela['nazwisko'],
     )
 
+
+# Email confirmation
+@bp.route('/confirm_email/<given_confirmation_code>', methods=('GET', 'POST'))
+def confirm_email(given_confirmation_code):
+    db = get_db()
+    confirmation_code_present = db.execute('SELECT COUNT(*) FROM wizyty WHERE kod_potwierdzajacy_email=?',
+                                           (given_confirmation_code,)).fetchone()[0]
+
+    if confirmation_code_present:
+        db.execute('UPDATE wizyty SET potwierdzony_email=1 WHERE kod_potwierdzajacy_email=?',
+                   (given_confirmation_code,))
+        db.commit()
+
+        return 'Email został potwierdzony.'
+
+    else:
+        return 'Błędny kod.'

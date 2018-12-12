@@ -19,5 +19,7 @@ CREATE TABLE wizyty (
   imie_ucznia TEXT NOT NULL,
   nazwisko_ucznia TEXT NOT NULL,
   godzina TEXT NOT NULL,
+  potwierdzony_email BOOL NOT NULL DEFAULT 0,
+  kod_potwierdzajacy_email,
   FOREIGN KEY (id_nauczyciela) REFERENCES nauczyciele (id)
 );
