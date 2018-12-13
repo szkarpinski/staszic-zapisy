@@ -9,7 +9,7 @@ from main import mail
 from main.db import get_db
 from werkzeug.exceptions import abort
 import _thread
-import captcha
+from . import captcha
 
 bp = Blueprint('zapisy', __name__)
 
@@ -58,6 +58,13 @@ def nauczyciel(id):
         error = None
         captcha_response = request.form.get('g-recaptcha-response')
 
+        #google reCAPTCHA
+        if captcha.checkRecaptcha(captcha_response):
+            print("Czlowiek")
+        else:
+            error += "Okropny z ciebie bot!!! "
+        
+        
         if not imie_ucznia:
             error = "Brakuje imienia ucznia."
         elif not nazwisko_ucznia:
