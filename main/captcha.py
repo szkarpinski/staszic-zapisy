@@ -16,7 +16,7 @@ def checkRecaptcha(response):
     res_body = urllib.request.urlopen(url).read()
     jsonobj = json.loads(res_body.decode("utf-8"))
     
-    print(jsonobj['success'])
+    # print(jsonobj['success'])
     if jsonobj['success']:
         return True
     else:
