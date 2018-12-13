@@ -70,7 +70,7 @@ def nauczyciel(id):
             error = "Brakuje adresu e-mail."
         elif not rodo:
             error = "Brakuje zgody na przetwarzanie danych osobowych."
-        elif not godzina or not re.match('[0-2]?\d:[0-5]\d', godzina) or godzina != re.match('[0-2]\d:[0-5]\d', godzina)[0]:
+        elif not godzina or not re.match('[0-2]?\d:[0-5]\d', godzina) or godzina != re.match('[0-2]\d:[0-5]\d', godzina).group(0):
             error = "Godzina jest w nieodpowiednim formacie."
         #google reCAPTCHA
         elif not captcha.checkRecaptcha(captcha_response):
@@ -86,7 +86,7 @@ def nauczyciel(id):
                 error = 'Godzina jest już zajęta.'
 
 
-        if error is None:
+        if error is not None:
             print(error)
             flash(error)
         else:          
