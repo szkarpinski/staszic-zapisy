@@ -9,6 +9,7 @@ from main import mail
 from main.db import get_db
 from werkzeug.exceptions import abort
 import _thread
+import captcha
 
 bp = Blueprint('zapisy', __name__)
 
@@ -55,7 +56,7 @@ def nauczyciel(id):
         godzina = request.form.get('hour')
         rodo = request.form.get('rodo')
         error = None
-        print(re.match('[0-2]\d:[0-5]\d', godzina))
+        captcha_response = request.form.get('g-recaptcha-response')
 
         if not imie_ucznia:
             error = "Brakuje imienia ucznia."
@@ -71,6 +72,10 @@ def nauczyciel(id):
             error = "Brakuje zgody na przetwarzanie danych osobowych."
         elif not godzina or not re.match('[0-2]?\d:[0:5]\d', godzina) or godzina != re.match('[0-2]\d:[0:5]\d', godzina)[0]:
             error = "Godzina jest w nieodpowiednim formacie."
+        #google reCAPTCHA
+        elif not captcha.checkRecaptcha(captcha_response):
+            error = "Okropny z ciebie bot!!! "
+            
         # Trzeba zrobić jakoś transakcje
         elif not dane_nauczyciela['obecny']:
             error = 'Nauczyciel nie będzie obecny na dniu otwartym.'
