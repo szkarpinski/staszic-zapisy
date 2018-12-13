@@ -1,6 +1,6 @@
 import configparser
 import json
-import urllib2
+import urllib.request as urllib2
 import os
 from flask import current_app
 
