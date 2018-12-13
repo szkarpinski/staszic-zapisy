@@ -1,6 +1,7 @@
 import datetime as dt
 import configparser
 import os
+import re
 from flask import (
     Blueprint, render_template, current_app, request, url_for, make_response, flash, redirect
 )
@@ -53,20 +54,23 @@ def nauczyciel(id):
         email = request.form.get('email')
         godzina = request.form.get('hour')
         rodo = request.form.get('rodo')
-        error = ''
+        error = None
+        print(re.match('[0-2]\d:[0-5]\d', godzina))
 
         if not imie_ucznia:
-            error += "Brakuje imienia ucznia."
+            error = "Brakuje imienia ucznia."
         elif not nazwisko_ucznia:
-            error += "Brakuje nazwiska ucznia."
+            error = "Brakuje nazwiska ucznia."
         elif not imie_rodzica:
-            error += "Brakuje imienia rodzica."
+            error = "Brakuje imienia rodzica."
         elif not nazwisko_rodzica:
-            error += "Brakuje nazwiska rodzica."
+            error = "Brakuje nazwiska rodzica."
         elif not email:
-            error += "Brakuje adresu e-mail."
+            error = "Brakuje adresu e-mail."
         elif not rodo:
-            error += "Brakuje zgody na przetwarzanie danych osobowych."
+            error = "Brakuje zgody na przetwarzanie danych osobowych."
+        elif not godzina or not re.match('[0-2]?\d:[0:5]\d', godzina) or godzina != re.match('[0-2]\d:[0:5]\d', godzina)[0]:
+            error = "Godzina jest w nieodpowiednim formacie."
         # Trzeba zrobić jakoś transakcje
         elif not dane_nauczyciela['obecny']:
             error = 'Nauczyciel nie będzie obecny na dniu otwartym.'
@@ -77,7 +81,7 @@ def nauczyciel(id):
                 error = 'Godzina jest już zajęta.'
 
 
-        if error:
+        if error is None:
             print(error)
             flash(error)
         else:          
