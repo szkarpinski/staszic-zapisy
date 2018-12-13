@@ -58,7 +58,7 @@ def nauczyciel(id):
         error = None
         captcha_response = request.form.get('g-recaptcha-response')
 
-        elif not imie_ucznia:
+        if not imie_ucznia:
             error = "Brakuje imienia ucznia."
         elif not nazwisko_ucznia:
             error = "Brakuje nazwiska ucznia."
