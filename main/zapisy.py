@@ -8,7 +8,7 @@ from main import mail
 from main.db import get_db
 from werkzeug.exceptions import abort
 import _thread
-import captcha
+from . import captcha
 
 bp = Blueprint('zapisy', __name__)
 
@@ -57,6 +57,13 @@ def nauczyciel(id):
         captcha_response = request.form.get('g-recaptcha-response')
         error = ''
 
+        #google reCAPTCHA
+        if captcha.checkRecaptcha(captcha_response):
+            print("Czlowiek")
+        else:
+            error += "Okropny z ciebie bot!!! "
+        
+        
         if not imie_ucznia:
             error += "Brakuje imienia ucznia."
         elif not nazwisko_ucznia:
@@ -69,13 +76,7 @@ def nauczyciel(id):
             error += "Brakuje adresu e-mail."
         elif not rodo:
             error += "Brakuje zgody na przetwarzanie danych osobowych."
-
-        #google reCAPTCHA
-        if captcha.checkRecaptcha(captcha_response):
-            print("Czlowiek")
-        else:
-            error += "Okropny z ciebie bot!!! "
-            
+    
         # Trzeba zrobić jakoś transakcje
         elif not dane_nauczyciela['obecny']:
             error = 'Nauczyciel nie będzie obecny na dniu otwartym.'
