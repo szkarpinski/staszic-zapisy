@@ -9,7 +9,7 @@
 
         var meetings = [
             {% for r in rozklad %}
-                {'start': new Date("{{r.start}}"), 'end': new Date("{{r.koniec}}"), 'free': {{r.wolne|lower}} },
+                {'start': new Date("{{r.start}}".replace(/-/g, "/")), 'end': new Date("{{r.koniec}}".replace(/-/g, "/")), 'free': {{r.wolne|lower}} },
             {% endfor %}
         ];
 
