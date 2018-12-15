@@ -73,9 +73,9 @@ def nauczyciel(id):
         elif not godzina or not re.match('[0-2]?\d:[0-5]\d', godzina) or godzina != re.match('[0-2]\d:[0-5]\d', godzina).group(0):
             error = "Godzina jest w nieodpowiednim formacie."
         #google reCAPTCHA
-        elif not captcha.checkRecaptcha(captcha_response):
-            error = "Okropny z ciebie bot!!!"
-            
+        elif int(conf['captcha']['use_captcha'])==1:
+            if not captcha.checkRecaptcha(captcha_response):
+                error = "Okropny z ciebie bot!!!"
         # Trzeba zrobić jakoś transakcje
         elif not dane_nauczyciela['obecny']:
             error = 'Nauczyciel nie będzie obecny na dniu otwartym.'
