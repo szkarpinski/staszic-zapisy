@@ -159,5 +159,7 @@ def nauczyciel(id):
                            rozklad=rozklad,
                            imie=dane_nauczyciela['imie'],
                            nazwisko=dane_nauczyciela['nazwisko'],
+                           use_captcha=conf['captcha']['use_captcha'],
+                           captcha_sitekey=conf['captcha']['captcha_sitekey'],
     )
 
