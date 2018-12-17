@@ -39,8 +39,8 @@ def send_mails():
     nauczyciele = db.execute('SELECT * FROM nauczyciele')
     for nauczyciel in nauczyciele:
         wizyty = db.execute('SELECT * FROM wizyty WHERE id_nauczyciela = ?',
-                            (nauczyciel['id'],))
-        if wizyty:
+                            (nauczyciel['id'],)).fetchall()
+        if nauczyciel['email'] != '?' and wizyty:
             mail.send_message(
                 subject='Podsumowanie zapisów na dzień otwarty {}'.format(conf['dzien otwarty']['data']),
                 html=render_template('email/podsumowanie_nauczyciel.html',
