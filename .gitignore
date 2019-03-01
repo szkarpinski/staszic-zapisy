@@ -6,6 +6,10 @@ instance/
 .pytest_cache/
 .coverage
 htmlcov/
+bin/
+lib/
+lib64
+pyvenv.cfg
 
 dist/
 build/
