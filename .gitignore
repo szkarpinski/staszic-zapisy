@@ -8,6 +8,7 @@ instance/
 htmlcov/
 bin/
 lib/
+var/
 lib64
 pyvenv.cfg
 
