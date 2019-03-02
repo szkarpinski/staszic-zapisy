@@ -209,7 +209,8 @@ def login():
         conf = configparser.ConfigParser()
         conf.read(os.path.join(current_app.instance_path, 'config.ini'))
         error = None
-
+        print(conf['admin']['hash'])
+        
         if not check_password_hash(conf['admin']['hash'], password):
             error = 'Nieprawidłowe hasło administratora!'
 
