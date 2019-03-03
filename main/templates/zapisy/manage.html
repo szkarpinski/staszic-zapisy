@@ -4,6 +4,20 @@
 {% block scripts %}
     {{ super() }}
     <script>
+        meetings = [
+            {% for t in terminy %}
+                {'godzina': '{{ t.godzina }}', 'nauczyciel': '{{ t.imie }} {{ t.nazwisko }}', 'id_nauczyciela': {{ t.id_nauczyciela }} },
+            {% endfor %}
+        ];
+
+        function confirm_cancel(meeting_id) {
+            $('#cancel_modal_who').html(meetings[meeting_id]['nauczyciel']);
+            $('#cancel_modal_when').html(meetings[meeting_id]['godzina']);
+            $('#cancel_form_who').val(meetings[meeting_id]['id_nauczyciela']);
+            $('#cancel_form_when').val(meetings[meeting_id]['godzina']);
+            $('#cancel_modal').modal('open');
+        }
+
         $('body').ready(function(){$('.modal').modal();})
     </script>
 {% endblock scripts %}
@@ -29,7 +43,7 @@
                                     <td>{{ t.godzina }}</td>
                                     <td>{{ t.imie }} {{ t.nazwisko }}</td>
                                     <td>
-                                         <a class="modal-trigger" href="#cancel_modal_{{ loop.index0 }}">Odwołaj</a>
+                                         <a href="#" onclick="confirm_cancel({{ loop.index0 }})">Odwołaj</a>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -40,24 +54,28 @@
         </div>
     </div>
 
-    {% for t in terminy %}
-        <div id="cancel_modal_{{ loop.index0 }}" class="modal bottom-sheet">
-            <div class="modal-content container">
-                <div class="row">
-                    <div class="col s12">
-                        Czy na pewno chcesz odwołać spotkanie z <b>{{ t.imie }} {{ t.nazwisko }}</b> o godzinie <b>{{ t.godzina }}</b>?
-                        Tej operacji nie będzie można cofnąć.
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col s12">
-                        <a class="waves-effect waves-light btn">Anuluj</a>
-			<a class="waves-effect waves-light btn red"><i class="material-icons left">delete</i>Usuń</a> 
-			<!-- <a class="waves-effect waves-light btn red" type="submit"><i class="material-icons left">delete</i>Usuń {{ loop.index0 }}</a> !-->
-                    </div>
+    <div id="cancel_modal" class="modal bottom-sheet">
+        <div class="modal-content container">
+            <div class="row">
+                <div class="col s12">
+                    Czy na pewno chcesz odwołać spotkanie z
+                    <b id="cancel_modal_who"></b> o godzinie <b id="cancel_modal_when"></b>?
+                    Tej operacji nie będzie można cofnąć.
                 </div>
             </div>
+            <form method="post" action="">
+                <input type="hidden" name="godzina" id="cancel_form_when"/>
+                <input type="hidden" name="id_nauczyciela" id="cancel_form_who"/>
+                <div class="row">
+                    <div class="col s12">
+                        <a class="waves-effect waves-light btn" href="#" onclick="$('#cancel_modal').modal('close');">Anuluj</a>
+                        <button type="submit" class="waves-effect waves-light btn red">
+                            Usuń
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
-    {% endfor %}
+    </div>
 
 {% endblock content %}
