@@ -1,7 +1,62 @@
-<!DOCTYPE html>
-<html>
-  <head></head>
-<body>
-  Panel
-</body>
-</html>
+{% extends "zapisy/user_base.html" %}
+
+{% block title %}Zarządzanie spotkaniami{% endblock title %}
+{% block scripts %}
+    {{ super() }}
+    <script>
+        $('body').ready(function(){$('.modal').modal();})
+    </script>
+{% endblock scripts %}
+
+{% block content %}
+    <div class="row">
+        <div class="col s12">
+            <div class="card white">
+                 <div class="card-content grey-text text-darken-2 container">
+                     <span class="card-title">Spotkania dla {{ email }}</span>
+                     <table class="striped">
+                         <thead>
+                            <tr>
+                                <th>Godzina</th>
+                                <th>Nauczyciel</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                         </thead>
+                         <tbody>
+                            {% for t in terminy %}
+                                <tr>
+                                    <td>{{ t.godzina }}</td>
+                                    <td>{{ t.imie }} {{ t.nazwisko }}</td>
+                                    <td>
+                                         <a class="modal-trigger" href="#cancel_modal_{{ loop.index0 }}">Odwołaj</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                         </tbody>
+                     </table>
+                 </div>
+            </div>
+        </div>
+    </div>
+
+    {% for t in terminy %}
+        <div id="cancel_modal_{{ loop.index0 }}" class="modal bottom-sheet">
+            <div class="modal-content container">
+                <div class="row">
+                    <div class="col s12">
+                        Czy na pewno chcesz odwołać spotkanie z <b>{{ t.imie }} {{ t.nazwisko }}</b> o godzinie <b>{{ t.godzina }}</b>?
+                        Tej operacji nie będzie można cofnąć.
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        <a class="waves-effect waves-light btn">Anuluj</a>
+                        <a class="waves-effect waves-light btn red"><i class="material-icons left">delete</i>Usuń</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+{% endblock content %}
