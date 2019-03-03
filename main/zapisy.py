@@ -18,6 +18,8 @@ bp = Blueprint('zapisy', __name__)
 @bp.route('/')
 def index():
     db = get_db()
+    conf = configparser.ConfigParser()
+    conf.read(os.path.join(current_app.instance_path, 'config.ini'))
 
     # Komunikacja z bazą
     nauczyciele = db.execute(
@@ -30,9 +32,16 @@ def index():
         pass
     else:
         success = 0
+
+    # Opcjonalne ogłoszenie
+    ogloszenie = ''
+    if conf['ogloszenie']['pokaz'] != 0:
+        ogloszenie = conf['ogloszenie']['tresc']
+    
     # View
     return render_template('zapisy/index.html', nauczyciele=nauczyciele,
-                           show_success=int(success)
+                           show_success=int(success),
+                           ogloszenie=ogloszenie
     )
     
 # View wyboru godziny do zapisu

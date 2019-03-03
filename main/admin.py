@@ -34,12 +34,15 @@ def admin():
     conf = configparser.ConfigParser()
     conf.read(os.path.join(current_app.instance_path, 'config.ini'))
     dane_dnia = conf['dzien otwarty']
+    dane_ogloszen = conf['ogloszenie']
 
     if request.method == 'POST':
         date = request.form.get('date')
         start = request.form.get('start')
         end = request.form.get('end')
         interval = request.form.get('interval')
+        uzyj_ogloszenia = True #request.form.get(' ')
+        tresc_ogloszenia = "Numery sal pierdu pierdu" #request.form.get('  ')
         message = "Ustawiono: "
         print(date, start, end, interval)
 
@@ -79,7 +82,15 @@ def admin():
                 dane_dnia['blok'] = "{}:{}".format(
                     int(interval) // 60, int(interval) % 60)
                 zmieniono = True
-            
+        if uzyj_ogloszenia:
+            message += "widoczność ogłoszenia, "
+            dane_ogloszen['pokaz'] = uzyj_ogloszenia
+            zmieniono = True
+        if tresc_ogloszenia:
+            message += "treść ogłoszenia, "
+            dane_ogloszen['tresc'] = tresc_ogloszenia
+            zmieniono = True
+        
         if message == "Ustawiono: ":
             message = "Nic nie zmieniono"
         else:
@@ -110,7 +121,15 @@ def admin():
         return int(hm.split(':')[0])*60+int(hm.split(':') [1])
     ustawienia_czasu['interval'] = minutes(dane_dnia['blok'])
 
-    return render_template('admin/panel.html', nauczyciele = nauczyciele, ustawienia_czasu=ustawienia_czasu)
+    uzyj_ogloszenia = dane_ogloszen['pokaz']
+    tresc_ogloszenia = dane_ogloszen['tresc']
+        
+    return render_template('admin/panel.html',
+                           nauczyciele = nauczyciele,
+                           ustawienia_czasu=ustawienia_czasu,
+                           pokaz_ogloszenie=uzyj_ogloszenia,
+                           ogloszenie=tresc_ogloszenia
+    )
 
 #Interfejs ustawień - szczegóły nauczyciela
 @bp.route('/nauczyciel/<int:id>', methods=('GET', 'POST'))

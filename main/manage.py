@@ -10,7 +10,7 @@ bp = Blueprint('manage', __name__)
 @bp.route('/manage/<string:key>', methods=('GET', 'POST'))
 def panel(key):
     db = get_db()
-    email = 'hugo@staszic.waw.pl'
+    email = 'janekjan@staszic.waw.pl'
 
     terminy = db.execute(
         'SELECT * FROM wizyty JOIN nauczyciele ON wizyty.id_nauczyciela=nauczyciele.id WHERE email_rodzica = ? ORDER BY godzina', (email,)
