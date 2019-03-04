@@ -100,12 +100,29 @@ def nauczyciel(id):
             flash(error)
         else:          
             # Rezerwowanie terminu
+            # Zapis rodzica
+            rodzic = db.execute(
+                'SELECT * FROM rodzice '
+                'WHERE imie = ? AND nazwisko = ? AND imie_ucznia = ? AND nazwisko_ucznia = ? AND email = ?',
+                (imie_rodzica, nazwisko_rodzica, imie_ucznia, nazwisko_ucznia, email)
+            ).fetchone()
+            if not rodzic:
+                db.execute(
+                    'INSERT INTO rodzice '
+                    '(imie, nazwisko, imie_ucznia, nazwisko_ucznia, email) '
+                    'VALUES (?, ?, ?, ?, ?)',
+                    (imie_rodzica, nazwisko_rodzica, imie_ucznia, nazwisko_ucznia, email)
+                )
+                rodzic = db.execute(
+                    'SELECT * FROM rodzice '
+                    'WHERE imie = ? AND nazwisko = ? AND imie_ucznia = ? AND nazwisko_ucznia = ? AND email = ?',
+                    (imie_rodzica, nazwisko_rodzica, imie_ucznia, nazwisko_ucznia, email)
+                ).fetchone()
             db.execute(
                 'INSERT INTO wizyty '
-                '(id_nauczyciela, imie_rodzica, nazwisko_rodzica, email_rodzica, '
-                'imie_ucznia, nazwisko_ucznia, godzina)'
-                ' VALUES (?, ?, ?, ?, ?, ?, ?)',
-                (id, imie_rodzica, nazwisko_rodzica, email, imie_ucznia, nazwisko_ucznia, godzina)
+                '(id_nauczyciela, id_rodzica, godzina)'
+                ' VALUES (?, ?, ?)',
+                (id, rodzic['id'], godzina)
             )
             db.commit()
             

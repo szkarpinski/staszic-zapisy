@@ -171,8 +171,8 @@ def nauczyciel(id):
 
     #Lista zapisów dla nauczyciela
     terminy = db.execute(
-        'SELECT imie_ucznia, nazwisko_ucznia, imie_rodzica, nazwisko_rodzica, godzina '
-        'FROM wizyty WHERE id_nauczyciela = ? ORDER BY godzina', (id,)
+        'SELECT imie_ucznia, nazwisko_ucznia, imie AS imie_rodzica, nazwisko AS nazwisko_rodzica, godzina '
+        'FROM wizyty JOIN rodzice WHERE id_nauczyciela = ? ORDER BY godzina', (id,)
     ).fetchall()
     nauczyciel = db.execute(
         'SELECT imie, nazwisko, email, obecny FROM nauczyciele WHERE id = ?',(id,)
