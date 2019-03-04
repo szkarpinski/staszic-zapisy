@@ -3,7 +3,7 @@ import functools
 from itsdangerous import Serializer, BadSignature
 from main.db import get_db
 from flask import (
-    Blueprint, render_template, flash, redirect, url_for, session, g
+    Blueprint, render_template, flash, redirect, url_for, session, g, current_app
 )
 from main.db import get_db
 
@@ -37,7 +37,7 @@ def auth_required(view):
 @bp.route('/auth/<string:key>')
 def auth(key):
     db = get_db()
-    valid, id = Serializer('XD').loads_unsafe(key)
+    valid, id = Serializer(current_app.config['SECRET_KEY']).loads_unsafe(key)
     if not valid:
         flash('Niepoprawny hash. Sprawdź czy nie pomyliłeś się przy przepisywaniu.')
         return redirect(url_for('index'))
