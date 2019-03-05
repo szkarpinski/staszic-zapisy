@@ -2,6 +2,7 @@ import datetime as dt
 import configparser
 import os
 import re
+from itsdangerous import Serializer
 from flask import (
     Blueprint, render_template, current_app, request, url_for, make_response, flash, redirect
 )
@@ -82,8 +83,8 @@ def nauczyciel(id):
         elif not godzina or not re.match('[0-2]?\d:[0-5]\d', godzina) or godzina != re.match('[0-2]\d:[0-5]\d', godzina).group(0):
             error = "Godzina jest w nieodpowiednim formacie."
         #google reCAPTCHA
-        elif int(conf['captcha']['use_captcha'])==1:
-            if not captcha.checkRecaptcha(captcha_response):
+        elif int(conf['captcha']['use_captcha'])==1 \
+            and not captcha.checkRecaptcha(captcha_response):
                 error = "Okropny z ciebie bot!!!"
         # Trzeba zrobić jakoś transakcje
         elif not dane_nauczyciela['obecny']:
@@ -137,6 +138,7 @@ def nauczyciel(id):
                                      hour=godzina,
                                      date=conf['dzien otwarty']['data'],
                                      dane_nauczyciela=dane_nauczyciela,
+                                     link=url_for('manage.auth', key=Serializer(current_app.config['SECRET_KEY']).dumps(rodzic['id']), _external=True),
                 ),
                 recipients=[email]
             )
