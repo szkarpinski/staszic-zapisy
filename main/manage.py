@@ -3,7 +3,7 @@ import functools
 from itsdangerous import Serializer, BadSignature
 from main.db import get_db
 from flask import (
-    Blueprint, render_template, flash, redirect, url_for, session, g, current_app
+    Blueprint, render_template, flash, redirect, url_for, session, g, current_app, request
 )
 from main.db import get_db
 
@@ -57,14 +57,34 @@ def auth(key):
 @auth_required
 def panel():
     db = get_db()
-    id = session['rodzic']
-    rodzic = db.execute(
-        'SELECT * FROM rodzice WHERE id = ?',
-        (id,)
-    ).fetchone()
     terminy = db.execute(
         'SELECT * FROM wizyty JOIN nauczyciele ON nauczyciele.id = wizyty.id_nauczyciela '
-        'WHERE id_rodzica = ? ORDER BY godzina', (rodzic['id'],)
+        'WHERE id_rodzica = ? ORDER BY godzina', (g.rodzic['id'],)
     ).fetchall()
-    return render_template('zapisy/manage.html', email=rodzic['email'], terminy=terminy)
+    return render_template('zapisy/manage.html', email=g.rodzic['email'], terminy=terminy)
 
+@bp.route('/delet', methods=['POST'])
+@auth_required
+def delet():
+    db = get_db()
+    godzina = request.form['godzina']
+    id_nauczyciela = request.form['id_nauczyciela']
+    wizyta = db.execute(
+        'SELECT * FROM wizyty '
+        'WHERE id_nauczyciela = ? '
+        'AND godzina = ?',
+        (id_nauczyciela, godzina)
+    ).fetchone()
+    if not wizyta:
+        flash('Nie ma takiej wizyty.')
+        return redirect(url_for('manage.panel'))
+    if wizyta['id_rodzica'] != g.rodzic['id']:
+        flash('To nie twoja wizyta.')
+        return redirect(url_for('manage.panel'))
+    db.execute(
+        'DELETE FROM wizyty '
+        'WHERE id_nauczyciela = ? '
+        'AND godzina = ?',
+        (id_nauczyciela, godzina))
+    db.commit()
+    return redirect(url_for('manage.panel'))
