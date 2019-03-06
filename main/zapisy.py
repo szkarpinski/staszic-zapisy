@@ -36,7 +36,7 @@ def index():
 
     # Opcjonalne ogłoszenie
     ogloszenie = ''
-    if conf['ogloszenie']['pokaz'] != 0:
+    if conf['ogloszenie']['pokaz'] != str(0):
         ogloszenie = conf['ogloszenie']['tresc']
     
     # View
