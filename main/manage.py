@@ -14,7 +14,7 @@ bp = Blueprint('manage', __name__, url_prefix='/manage')
 @bp.before_app_request
 def load_parent():
     db = get_db()
-    id = session['rodzic']
+    id = session.get('rodzic', None)
 
     if id is None:
         g.rodzic = None
