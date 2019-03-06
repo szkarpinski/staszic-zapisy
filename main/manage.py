@@ -46,7 +46,7 @@ def auth(key):
         (id,)
     ).fetchone()        
     if not rodzic:
-        flash('Niepoprawny numer nauczyciela.')
+        flash('Rodzic pasujący do hasha nie istnieje. ')
         return redirect(url_for('index'))
     else:
         session.clear()
