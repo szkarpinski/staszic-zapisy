@@ -61,7 +61,10 @@ def panel():
         'SELECT * FROM wizyty JOIN nauczyciele ON nauczyciele.id = wizyty.id_nauczyciela '
         'WHERE id_rodzica = ? ORDER BY godzina', (g.rodzic['id'],)
     ).fetchall()
-    return render_template('zapisy/manage.html', email=g.rodzic['email'], terminy=terminy)
+    return render_template('zapisy/manage.html',
+                           terminy=terminy,
+                           
+    )
 
 @bp.route('/delet', methods=['POST'])
 @auth_required
