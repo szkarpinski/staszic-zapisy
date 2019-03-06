@@ -48,7 +48,7 @@
             var diff = diff_watch();
             if (diff) {
                 var label = $('label[for='+diff.replace('#', '')+']').text();
-                var message = 'Pole "'+label+'" zostało zmienione. Zapisanie zmian spowoduje NIEODWRACALNE USUNIĘCIE BAZY DANYCH.'
+                var message = 'Pole "'+label+'" zostało zmienione. Zapisanie zmian spowoduje NIEODWRACALNE USUNIĘCIE BAZY DANYCH.';
                 $('#watch').html(message);
             } else $('#watch').html('');
         }
