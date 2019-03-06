@@ -17,15 +17,16 @@ def send_mails():
     conf.read(os.path.join(current_app.instance_path, 'config.ini'))
 
 
-    rodzice = db.execute('SELECT email_rodzica '
-                         'FROM wizyty '
+    rodzice = db.execute('SELECT rodzice.email AS email_rodzica '
+                         'FROM wizyty JOIN rodzice ON wizyty.id_rodzica = rodzice.id '
                          'GROUP BY email_rodzica').fetchall()
     for rodzic in rodzice:
         rodzic = rodzic['email_rodzica']
         wizyty = db.execute('SELECT * '
                             'FROM wizyty w JOIN nauczyciele n '
                             'ON n.id=w.id_nauczyciela '
-                            'WHERE w.email_rodzica = ?',
+                            'JOIN rodzice r ON r.id=w.id_rodzica '
+                            'WHERE r.email = ?',
                             (rodzic,)
                  ).fetchall()
 
@@ -38,7 +39,10 @@ def send_mails():
     
     nauczyciele = db.execute('SELECT * FROM nauczyciele')
     for nauczyciel in nauczyciele:
-        wizyty = db.execute('SELECT * FROM wizyty WHERE id_nauczyciela = ?',
+        wizyty = db.execute('SELECT imie_ucznia, nazwisko_ucznia, godzina, '
+                            'rodzice.imie AS imie_rodzica, rodzice.nazwisko AS nazwisko_rodzica '
+                            'FROM wizyty JOIN rodzice ON wizyty.id_rodzica = rodzice.id '
+                            'WHERE id_nauczyciela = ?',
                             (nauczyciel['id'],)).fetchall()
         if nauczyciel['email'] != '?' and wizyty:
             mail.send_message(

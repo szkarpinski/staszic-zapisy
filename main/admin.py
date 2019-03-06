@@ -104,7 +104,7 @@ def admin():
         # Reset bazy wizyt po zmianie danych czasowych
         if zmieniono:
             db.execute('DELETE FROM wizyty')
-            db.execute('UPDATE nauczyciele SET obecny = 1')
+            # db.execute('UPDATE nauczyciele SET obecny = 1')
             db.commit()
 
     #Lista nauczycieli
@@ -140,6 +140,7 @@ def nauczyciel(id):
         print("POST osiagniety")
         
         if request.form.get('delete') == 'true':
+            #TODO Nauczyciel usunięty - mail do rodziców
             db.execute('DELETE FROM wizyty WHERE id_nauczyciela = ?', (id,))
             db.execute('DELETE FROM nauczyciele WHERE id = ?', (id,))
             db.commit()

@@ -89,5 +89,5 @@ def delet():
         'WHERE id_nauczyciela = ? '
         'AND godzina = ?',
         (id_nauczyciela, godzina))
-    db.commit()
+    db.commit() #commit(die)
     return redirect(url_for('manage.panel'))

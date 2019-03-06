@@ -104,26 +104,26 @@ def nauczyciel(id):
             # Zapis rodzica
             rodzic = db.execute(
                 'SELECT * FROM rodzice '
-                'WHERE imie = ? AND nazwisko = ? AND imie_ucznia = ? AND nazwisko_ucznia = ? AND email = ?',
-                (imie_rodzica, nazwisko_rodzica, imie_ucznia, nazwisko_ucznia, email)
+                'WHERE email = ?',
+                (email,)
             ).fetchone()
             if not rodzic:
                 db.execute(
                     'INSERT INTO rodzice '
-                    '(imie, nazwisko, imie_ucznia, nazwisko_ucznia, email) '
-                    'VALUES (?, ?, ?, ?, ?)',
-                    (imie_rodzica, nazwisko_rodzica, imie_ucznia, nazwisko_ucznia, email)
+                    '(imie, nazwisko, email) '
+                    'VALUES (?, ?, ?)',
+                    (imie_rodzica, email)
                 )
                 rodzic = db.execute(
                     'SELECT * FROM rodzice '
-                    'WHERE imie = ? AND nazwisko = ? AND imie_ucznia = ? AND nazwisko_ucznia = ? AND email = ?',
-                    (imie_rodzica, nazwisko_rodzica, imie_ucznia, nazwisko_ucznia, email)
+                    'WHERE imie = ? AND nazwisko = ? AND email = ?',
+                    (imie_rodzica, nazwisko_rodzica, email)
                 ).fetchone()
             db.execute(
                 'INSERT INTO wizyty '
-                '(id_nauczyciela, id_rodzica, godzina)'
-                ' VALUES (?, ?, ?)',
-                (id, rodzic['id'], godzina)
+                '(id_nauczyciela, id_rodzica, godzina, imie_ucznia, nazwisko_ucznia)'
+                ' VALUES (?, ?, ?, ?, ?)',
+                (id, rodzic['id'], godzina, imie_ucznia, nazwisko_ucznia)
             )
             db.commit()
             
