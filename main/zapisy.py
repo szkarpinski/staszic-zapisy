@@ -112,7 +112,7 @@ def nauczyciel(id):
                     'INSERT INTO rodzice '
                     '(imie, nazwisko, email) '
                     'VALUES (?, ?, ?)',
-                    (imie_rodzica, email)
+                    (imie_rodzica, nazwisko_rodzica, email)
                 )
                 rodzic = db.execute(
                     'SELECT * FROM rodzice '

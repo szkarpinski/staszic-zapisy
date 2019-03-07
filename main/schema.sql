@@ -15,7 +15,7 @@ CREATE TABLE rodzice (
   id INTEGER PRIMARY KEY NOT NULL,
   imie TEXT NOT NULL,
   nazwisko TEXT NOT NULL,
-  email TEXT NOT NULL,
+  email TEXT NOT NULL
 );
 
 CREATE TABLE wizyty (
@@ -23,7 +23,7 @@ CREATE TABLE wizyty (
   id_rodzica INTEGER NOT NULL,
   godzina TEXT NOT NULL,
   imie_ucznia TEXT NOT NULL,
-  nazwisko_ucznia TEXT NOT NULL
+  nazwisko_ucznia TEXT NOT NULL,
   FOREIGN KEY (id_nauczyciela) REFERENCES nauczyciele (id),
   FOREIGN KEY (id_rodzica) REFERENCES rodzice (id),
   PRIMARY KEY (id_nauczyciela, godzina)
