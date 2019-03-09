@@ -33,6 +33,7 @@
                             <tr>
                                 <th>Godzina</th>
                                 <th>Nauczyciel</th>
+                                <th>Uczeń</th>
                                 <th></th>
                                 <th></th>
                             </tr>
@@ -42,6 +43,7 @@
                                 <tr>
                                     <td>{{ t.godzina }}</td>
                                     <td>{{ t.imie }} {{ t.nazwisko }}</td>
+                                    <td>{{ t.imie_ucznia }} {{ t.nazwisko_ucznia }}</td>
                                     <td>
                                          <a href="#" onclick="confirm_cancel({{ loop.index0 }})">Odwołaj</a>
                                     </td>
