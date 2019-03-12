@@ -136,11 +136,33 @@ def admin():
 @login_required
 def nauczyciel(id):
     db = get_db()
+    conf = configparser.ConfigParser()
+    conf.read(os.path.join(current_app.instance_path, 'config.ini'))
+
     if request.method == 'POST':
         print("POST osiagniety")
         
         if request.form.get('delete') == 'true':
             #TODO Nauczyciel usunięty - mail do rodziców
+            lehrer = db.execute(
+                'SELECT imie, nazwisko FROM nauczyciele WHERE id = ? ').fetchone()
+            rodzice = db.execute(
+                'SELECT DISTINCT id_rodzica, imie, nazwisko, email '
+                'FROM wizyty JOIN rodzice ON wizyty.id_rodzica=rodzice.id '
+                'WHERE id_nauczyciela = ? ', (id,)).fetchall()
+            for rodzic in rodzice:
+                mail.send_message(
+                    subject='Ważna zmiana: dzień otwarty {}'.format(conf['dzien otwarty']['data']),
+                    html=render_template('email/nieobecny.html',
+                                         pfname=rodzic['imie'],
+                                         plname=rodzic['nazwisko'],
+                                         date=conf['dzien otwarty']['data'],
+                                         imie_nauczyciela=lehrer['imie'],
+                                         nazwisko_nauczyciela=lehrer['nazwisko'],
+                    ),
+                    recipients=[rodzic['email']]
+                )
+                                     
             db.execute('DELETE FROM wizyty WHERE id_nauczyciela = ?', (id,))
             db.execute('DELETE FROM nauczyciele WHERE id = ?', (id,))
             db.commit()
