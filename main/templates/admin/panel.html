@@ -66,7 +66,7 @@
         <div class="col s12">
             <div class="card white">
                  <div class="card-content grey-text text-darken-2 container">
-                     <span class="card-title">Ustawienia czasu</span>
+                     <span class="card-title">Ustawienia</span>
                      <form method="post">
                          <div class="row">
                              <div class="col s6">
@@ -88,6 +88,22 @@
                                  <label for="interval">Czas trwania spotkania [min]</label>
                              </div>
                          </div>
+                         <div class="row">
+                             <div class="col s12">
+                                <textarea name="ogloszenie" id="ogloszenie" class="materialize-textarea">{{ ogloszenie }}</textarea>
+                                 <label for="ogloszenie">Ogłoszenie</label>
+                             </div>
+                         </div>
+                        <div class="row">
+                             <div class="col s6">
+                                <p>
+                                  <label>
+                                    <input type="checkbox" name="czy_ogloszenie" value="{{czy_ogloszenie}}"/>
+                                    <span>Pokazuj ogłoszenie</span>
+                                  </label>
+                                </p>
+                             </div>
+                        </div>
                          <div class="row">
                             <div class="col s8 red-text" id="errors">
                                 {% with messages = get_flashed_messages() %}

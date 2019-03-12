@@ -42,8 +42,8 @@ def admin():
         start = request.form.get('start')
         end = request.form.get('end')
         interval = request.form.get('interval')
-        uzyj_ogloszenia = True #request.form.get(' ')
-        tresc_ogloszenia = "Numery sal pierdu pierdu" #request.form.get('  ')
+        uzyj_ogloszenia = 1 if request.form.get('czy_ogloszenie') == 'on' else 0
+        tresc_ogloszenia = request.form.get('ogloszenie')
         message = "Ustawiono: "
         print(date, start, end, interval)
 
@@ -85,7 +85,7 @@ def admin():
                 zmieniono = True
         if uzyj_ogloszenia:
             message += "widoczność ogłoszenia, "
-            dane_ogloszen['pokaz'] = uzyj_ogloszenia
+            dane_ogloszen['pokaz'] = str(uzyj_ogloszenia)
             # zmieniono = True
         if tresc_ogloszenia:
             message += "treść ogłoszenia, "
@@ -122,14 +122,15 @@ def admin():
         return int(hm.split(':')[0])*60+int(hm.split(':') [1])
     ustawienia_czasu['interval'] = minutes(dane_dnia['blok'])
 
-    uzyj_ogloszenia = dane_ogloszen['pokaz']
+    uzyj_ogloszenia = int(dane_ogloszen['pokaz'])
     tresc_ogloszenia = dane_ogloszen['tresc']
         
     return render_template('admin/panel.html',
                            nauczyciele = nauczyciele,
                            ustawienia_czasu=ustawienia_czasu,
                            pokaz_ogloszenie=uzyj_ogloszenia,
-                           ogloszenie=tresc_ogloszenia
+                           ogloszenie=tresc_ogloszenia,
+                           czy_ogloszenie=uzyj_ogloszenia,
     )
 
 #Interfejs ustawień - szczegóły nauczyciela
