@@ -6,6 +6,7 @@ import datetime as dt
 from flask import (
     Blueprint, render_template, session, redirect, url_for, current_app, request, flash
 )
+from main import mail
 from flask.cli import with_appcontext
 from main.db import get_db
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -145,7 +146,7 @@ def nauczyciel(id):
         if request.form.get('delete') == 'true':
             #TODO Nauczyciel usunięty - mail do rodziców
             lehrer = db.execute(
-                'SELECT imie, nazwisko FROM nauczyciele WHERE id = ? ').fetchone()
+                'SELECT imie, nazwisko FROM nauczyciele WHERE id = ? ', (id,)).fetchone()
             rodzice = db.execute(
                 'SELECT DISTINCT id_rodzica, imie, nazwisko, email '
                 'FROM wizyty JOIN rodzice ON wizyty.id_rodzica=rodzice.id '
