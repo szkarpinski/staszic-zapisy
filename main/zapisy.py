@@ -37,7 +37,7 @@ def index():
     # Opcjonalne ogłoszenie
     ogloszenie = ''
     if conf['ogloszenie']['pokaz'] != str(0):
-        ogloszenie = conf['ogloszenie']['tresc']
+        ogloszenie = conf['ogloszenie']['tresc'].split(r'\n')
     
     # View
     return render_template('zapisy/index.html', nauczyciele=nauczyciele,
