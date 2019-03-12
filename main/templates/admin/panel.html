@@ -66,7 +66,7 @@
         <div class="col s12">
             <div class="card white">
                  <div class="card-content grey-text text-darken-2 container">
-                     <span class="card-title">Ustawienia czasu</span>
+                     <span class="card-title">Ustawienia</span>
                      <form method="post">
                          <div class="row">
                              <div class="col s6">
@@ -86,6 +86,12 @@
                              <div class="col s6">
                                 <input id="interval" name="interval" type="number" value="{{ ustawienia_czasu['interval'] }}"/>
                                  <label for="interval">Czas trwania spotkania [min]</label>
+                             </div>
+                         </div>
+                         <div class="row">
+                             <div class="col s12">
+                                <textarea name="ogloszenie" id="ogloszenie" class="materialize-textarea"></textarea>
+                                 <label for="ogloszenie">Ogłoszenie</label>
                              </div>
                          </div>
                          <div class="row">
