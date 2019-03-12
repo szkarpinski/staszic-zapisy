@@ -289,6 +289,25 @@ def dodaj_nauczyciela():
         
     return render_template('admin/add.html')
 
+
+@bp.route('/summary')
+@login_required
+def summary():
+    db = get_db()
+    liczba_wizyt = db.execute(
+        'SELECT id, imie, nazwisko, count(*) AS liczba_wizyt '
+        'FROM nauczyciele LEFT JOIN wizyty ON nauczyciele.id=wizyty.id_nauczyciela '
+        'GROUP BY nauczyciele.id ').fetchall()
+    #print(liczba_wizyt)
+    wizyty = db.execute(
+        'SELECT imie, nazwisko, godzina, imie_ucznia, nazwisko_ucznia '
+        'FROM nauczyciele LEFT JOIN wizyty ON nauczyciele.id=wizyty.id_nauczyciela '
+    ).fetchall()
+    #print(wizyty)
+    
+    return "hello"
+
+
 # Interface logowania
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
