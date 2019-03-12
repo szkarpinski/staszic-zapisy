@@ -161,6 +161,7 @@ def nauczyciel(id):
                                          date=conf['dzien otwarty']['data'],
                                          imie_nauczyciela=lehrer['imie'],
                                          nazwisko_nauczyciela=lehrer['nazwisko'],
+                                         teraz=dt.datetime.now(),
                     ),
                     recipients=[rodzic['email']]
                 )
@@ -209,6 +210,7 @@ def nauczyciel(id):
                                                  date=conf['dzien otwarty']['data'],
                                                  imie_nauczyciela=lehrer['imie'],
                                                  nazwisko_nauczyciela=lehrer['nazwisko'],
+                                                 teraz=dt.datetime.now()
                             ),
                             recipients=[rodzic['email']]
                         )
@@ -222,6 +224,7 @@ def nauczyciel(id):
                                                  date=conf['dzien otwarty']['data'],
                                                  imie_nauczyciela=lehrer['imie'],
                                                  nazwisko_nauczyciela=lehrer['nazwisko'],
+                                                 teraz=dt.datetime.now()
                             ),
                             recipients=[rodzic['email']]
                         )
