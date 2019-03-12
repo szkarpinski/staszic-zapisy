@@ -146,7 +146,7 @@ def nauczyciel(id):
         print("POST osiagniety")
         
         if request.form.get('delete') == 'true':
-            #TODO Nauczyciel usunięty - mail do rodziców
+            #Nauczyciel usunięty - mail do rodziców
             lehrer = db.execute(
                 'SELECT imie, nazwisko FROM nauczyciele WHERE id = ? ', (id,)).fetchone()
             rodzice = db.execute(
@@ -162,6 +162,7 @@ def nauczyciel(id):
                                          date=conf['dzien otwarty']['data'],
                                          imie_nauczyciela=lehrer['imie'],
                                          nazwisko_nauczyciela=lehrer['nazwisko'],
+                                         teraz=dt.datetime.now(),
                     ),
                     recipients=[rodzic['email']]
                 )
@@ -188,6 +189,48 @@ def nauczyciel(id):
             flash(error)
             print("błąd:"+error)
         else:
+            #Mail przy zmmianie obecności nauczyciela
+            lehrer = db.execute(
+                'SELECT imie, nazwisko, obecny FROM nauczyciele WHERE id = ? ',(id,)
+            ).fetchone()
+            if (lehrer['obecny']==1 and obecny=='on') or (lehrer['obecny']==0 and (not obecny=='on')):
+                pass
+            else:
+                #Zmienila sie obecnosc nauczyciela
+                rodzice = db.execute(
+                'SELECT DISTINCT id_rodzica, imie, nazwisko, email '
+                'FROM wizyty JOIN rodzice ON wizyty.id_rodzica=rodzice.id '
+                'WHERE id_nauczyciela = ? ', (id,)).fetchall()
+                if obecny=='on':
+                    for rodzic in rodzice:
+                        mail.send_message(
+                            subject='Ważna zmiana: dzień otwarty {}'.format(conf['dzien otwarty']['data']),
+                            html=render_template('email/znow_obecny.html',
+                                                 pfname=rodzic['imie'],
+                                                 plname=rodzic['nazwisko'],
+                                                 date=conf['dzien otwarty']['data'],
+                                                 imie_nauczyciela=lehrer['imie'],
+                                                 nazwisko_nauczyciela=lehrer['nazwisko'],
+                                                 teraz=dt.datetime.now()
+                            ),
+                            recipients=[rodzic['email']]
+                        )
+                else:
+                    for rodzic in rodzice:
+                        mail.send_message(
+                            subject='Ważna zmiana: dzień otwarty {}'.format(conf['dzien otwarty']['data']),
+                            html=render_template('email/nieobecny.html',
+                                                 pfname=rodzic['imie'],
+                                                 plname=rodzic['nazwisko'],
+                                                 date=conf['dzien otwarty']['data'],
+                                                 imie_nauczyciela=lehrer['imie'],
+                                                 nazwisko_nauczyciela=lehrer['nazwisko'],
+                                                 teraz=dt.datetime.now()
+                            ),
+                            recipients=[rodzic['email']]
+                        )
+                        
+                
             db.execute('UPDATE nauczyciele '
                        'SET imie = ?, nazwisko = ?, email = ?, obecny = ? '
                        'WHERE id = ?',
