@@ -294,19 +294,25 @@ def dodaj_nauczyciela():
 @login_required
 def summary():
     db = get_db()
-    liczba_wizyt = db.execute(
-        'SELECT id, imie, nazwisko, count(*) AS liczba_wizyt '
-        'FROM nauczyciele LEFT JOIN wizyty ON nauczyciele.id=wizyty.id_nauczyciela '
-        'GROUP BY nauczyciele.id ').fetchall()
-    #print(liczba_wizyt)
-    wizyty = db.execute(
-        'SELECT imie, nazwisko, godzina, imie_ucznia, nazwisko_ucznia '
-        'FROM nauczyciele LEFT JOIN wizyty ON nauczyciele.id=wizyty.id_nauczyciela '
-    ).fetchall()
-    #print(wizyty)
-    
-    return "hello"
 
+    nauczyciele = db.execute(
+        'SELECT id, imie, nazwisko FROM nauczyciele'
+    ).fetchall()
+
+    lista_wizyt = db.execute(
+        'SELECT id_nauczyciela, godzina, imie_ucznia, nazwisko_ucznia FROM wizyty'
+    ).fetchall()
+
+    # tworzę słownik id_nauczyciela -> wizyty
+    wizyty = { nauczyciel['id']: list() for nauczyciel in nauczyciele}
+    for wizyta in lista_wizyt: wizyty[wizyta['id_nauczyciela']].append(wizyta)
+
+    # sortuję
+    wizyty = {k: sorted(v, key=lambda a: a['godzina']) for k, v in wizyty.items()}
+    nauczyciele = sorted(nauczyciele, key=lambda a: a['nazwisko']+' '+a['imie'])
+
+    teraz=dt.datetime.now().strftime('%H:%M %d.%m.%Y')
+    return render_template('admin/summary.html', wizyty=wizyty, nauczyciele=nauczyciele, teraz=teraz)
 
 # Interface logowania
 @bp.route('/login', methods=('GET', 'POST'))

@@ -1,0 +1,63 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 2em;
+            }
+            table {
+                border-collapse: collapse;
+                width:100%;
+                align:center;
+            }
+            table, th, td {
+                 border: 1px solid darkgray
+            }
+            td.teacher {
+                font-size: 120%;
+                text-align: center;
+                padding: 0.3em;
+            }
+            td {
+                padding: 0.1em;
+            }
+            td.head {
+                color: gray;
+                text-align: center;
+                font-style: italic;
+                font-size:80%;
+            }
+        </style>
+    </head>
+    <body>
+        <i>Wygenerowano: {{ teraz }}</i><br><br>
+
+        <div style="text-align:center">
+            <table>
+                <tbody>
+                    {% for nauczyciel in nauczyciele %}
+                        <tr>
+                            <td colspan="3" class="teacher">
+                                <b>{{ nauczyciel.imie }} {{ nauczyciel.nazwisko }}</b>
+                                (liczba spotkań: {{ wizyty[nauczyciel.id]|count }})
+                            </td>
+                        </tr>
+                        {% if wizyty[nauczyciel.id]|count > 0 %}
+                            <tr>
+                                <td class="head">Godzina</td>
+                                <td class="head">Imię ucznia</td>
+                                <td class="head">Nazwisko ucznia</td>
+                             </tr>
+                        {% endif %}
+                        {% for wizyta in wizyty[nauczyciel.id] %}
+                            <tr>
+                                <td>{{ wizyta.godzina }}</td>
+                                <td>{{ wizyta.imie_ucznia }}</td>
+                                <td>{{ wizyta.nazwisko_ucznia }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>
