@@ -64,7 +64,11 @@
         <div class="col s12">
             <div class="card white">
                 <div class="card-content center">
-                    <span class="grey-text text-darken-2">{{ ogloszenie }}</span>
+                    <span class="grey-text text-darken-2">
+                        {% for line in ogloszenie %}
+                            {{ line }} <br/>
+                        {% endfor %}
+                    </span>
                 </div>
             </div>
         </div>
