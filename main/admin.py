@@ -42,31 +42,31 @@ def admin():
         start = request.form.get('start')
         end = request.form.get('end')
         interval = request.form.get('interval')
-        uzyj_ogloszenia = 1 if request.form.get('czy_ogloszenie') == 'on' else 0
+        uzyj_ogloszenia = 1 if request.form.get('czy_ogloszenie') else 0
+        print(uzyj_ogloszenia)
         tresc_ogloszenia = request.form.get('ogloszenie')
         message = "Ustawiono: "
-        print(date, start, end, interval)
 
         zmieniono = False
-        if date:
+        if date and date.replace('.', '/') != dane_dnia['data']:
             message += "datę, "
             dane_dnia['data'] = date.replace('.', '/')
             # zmieniono = True #Zmienienie daty nie usuwa bazy danych
-        if start:
+        if start and start != dane_dnia['start']:
             if start > (end if end else dane_dnia['koniec']):
                 message += 'początek (zła wartość), '
             else:
                 message += "początek, "
                 dane_dnia['start'] = start
                 zmieniono = True
-        if end:
+        if end and end != dane_dnia['koniec']:
             if end < dane_dnia['start']:
                 message += 'koniec (zła wartość), '
             else:
                 message += "koniec, "
                 dane_dnia['koniec'] = end
                 zmieniono = True
-        if interval:
+        if interval and "{}:{}".format(int(interval) // 60, int(interval) % 60) != dane_dnia['blok']:
             interval = int(interval)
             duration = dt.datetime.strptime(
                          dane_dnia['data'] +
@@ -83,11 +83,12 @@ def admin():
                 dane_dnia['blok'] = "{}:{}".format(
                     int(interval) // 60, int(interval) % 60)
                 zmieniono = True
-        if uzyj_ogloszenia:
+        print(dane_ogloszen['pokaz'])
+        if uzyj_ogloszenia is not None and str(uzyj_ogloszenia) != dane_ogloszen['pokaz']:
             message += "widoczność ogłoszenia, "
             dane_ogloszen['pokaz'] = str(uzyj_ogloszenia)
             # zmieniono = True
-        if tresc_ogloszenia:
+        if tresc_ogloszenia is not None and tresc_ogloszenia != dane_ogloszen['tresc']:
             message += "treść ogłoszenia, "
             dane_ogloszen['tresc'] = tresc_ogloszenia
             # zmieniono = True
