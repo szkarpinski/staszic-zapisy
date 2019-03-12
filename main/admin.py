@@ -211,7 +211,7 @@ def nauczyciel(id):
                                                  date=conf['dzien otwarty']['data'],
                                                  imie_nauczyciela=lehrer['imie'],
                                                  nazwisko_nauczyciela=lehrer['nazwisko'],
-                                                 teraz=dt.datetime.now()
+                                                 teraz=dt.datetime.now().strftime('%d/%m/%Y o godzinie %H:%M')
                             ),
                             recipients=[rodzic['email']]
                         )
@@ -225,7 +225,7 @@ def nauczyciel(id):
                                                  date=conf['dzien otwarty']['data'],
                                                  imie_nauczyciela=lehrer['imie'],
                                                  nazwisko_nauczyciela=lehrer['nazwisko'],
-                                                 teraz=dt.datetime.now()
+                                                 teraz=dt.datetime.now().strftime('%d/%m/%Y o godzinie %H:%M')
                             ),
                             recipients=[rodzic['email']]
                         )

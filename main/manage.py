@@ -63,7 +63,6 @@ def panel():
     ).fetchall()
     return render_template('zapisy/manage.html',
                            terminy=terminy,
-                           
     )
 
 @bp.route('/delet', methods=['POST'])
