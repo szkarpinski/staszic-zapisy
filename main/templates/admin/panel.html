@@ -98,7 +98,7 @@
                              <div class="col s6">
                                 <p>
                                   <label>
-                                    <input type="checkbox" name="czy_ogloszenie" value="{{czy_ogloszenie}}"/>
+                                    <input type="checkbox" name="czy_ogloszenie" {% if czy_ogloszenie==1 %}checked="checked"{% endif %}/>
                                     <span>Pokazuj ogłoszenie</span>
                                   </label>
                                 </p>
