@@ -122,7 +122,7 @@ def admin():
         return int(hm.split(':')[0])*60+int(hm.split(':') [1])
     ustawienia_czasu['interval'] = minutes(dane_dnia['blok'])
 
-    uzyj_ogloszenia = dane_ogloszen['pokaz']
+    uzyj_ogloszenia = int(dane_ogloszen['pokaz'])
     tresc_ogloszenia = dane_ogloszen['tresc']
         
     return render_template('admin/panel.html',
