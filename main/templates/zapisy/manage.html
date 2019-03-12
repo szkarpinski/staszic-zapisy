@@ -1,0 +1,88 @@
+{% extends "zapisy/user_base.html" %}
+
+{% block title %}Zarządzanie spotkaniami{% endblock title %}
+{% block scripts %}
+    {{ super() }}
+    <script>
+        meetings = [
+            {% for t in terminy %}
+                {'godzina': '{{ t.godzina }}', 'nauczyciel': '{{ t.imie }} {{ t.nazwisko }}', 'id_nauczyciela': {{ t.id_nauczyciela }} },
+            {% endfor %}
+        ];
+
+        function confirm_cancel(meeting_id) {
+            $('#cancel_modal_who').html(meetings[meeting_id]['nauczyciel']);
+            $('#cancel_modal_when').html(meetings[meeting_id]['godzina']);
+            $('#cancel_form_who').val(meetings[meeting_id]['id_nauczyciela']);
+            $('#cancel_form_when').val(meetings[meeting_id]['godzina']);
+            $('#cancel_modal').modal('open');
+        }
+
+        $('body').ready(function(){$('.modal').modal();})
+    </script>
+{% endblock scripts %}
+
+{% block content %}
+    <div class="row">
+        <div class="col s12">
+            <div class="card white">
+                 <div class="card-content grey-text text-darken-2 container">
+                     <span class="card-title">Spotkania dla {{ g.rodzic['email'] }}</span>
+                     <table class="striped">
+                         <thead>
+                            <tr>
+                                <th>Godzina</th>
+                                <th>Nauczyciel</th>
+                                <th>Uczeń</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                         </thead>
+                         <tbody>
+                            {% for t in terminy %}
+                                <tr>
+                                    <td>{{ t.godzina }}</td>
+                                    <td>
+                                        {{ t.imie }} {{ t.nazwisko }}
+                                        {% if not t.obecny %}
+                                            <span class="red-text">(nieobecny)</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ t.imie_ucznia }} {{ t.nazwisko_ucznia }}</td>
+                                    <td>
+                                         <a href="#" onclick="confirm_cancel({{ loop.index0 }})">Odwołaj</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                         </tbody>
+                     </table>
+                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="cancel_modal" class="modal bottom-sheet">
+        <div class="modal-content container">
+            <div class="row">
+                <div class="col s12">
+                    Czy na pewno chcesz odwołać spotkanie z
+                    <b id="cancel_modal_who"></b> o godzinie <b id="cancel_modal_when"></b>?
+                    Tej operacji nie będzie można cofnąć.
+                </div>
+            </div>
+            <form method="post" action="/manage/delet">
+                <input type="hidden" name="godzina" id="cancel_form_when"/>
+                <input type="hidden" name="id_nauczyciela" id="cancel_form_who"/>
+                <div class="row">
+                    <div class="col s12">
+                        <a class="waves-effect waves-light btn" href="#" onclick="$('#cancel_modal').modal('close');">Anuluj</a>
+                        <button type="submit" class="waves-effect waves-light btn red">
+                            Odwołaj
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock content %}

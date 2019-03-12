@@ -2,6 +2,7 @@ import datetime as dt
 import configparser
 import os
 import re
+from itsdangerous import Serializer
 from flask import (
     Blueprint, render_template, current_app, request, url_for, make_response, flash, redirect
 )
@@ -18,6 +19,8 @@ bp = Blueprint('zapisy', __name__)
 @bp.route('/')
 def index():
     db = get_db()
+    conf = configparser.ConfigParser()
+    conf.read(os.path.join(current_app.instance_path, 'config.ini'))
 
     # Komunikacja z bazą
     nauczyciele = db.execute(
@@ -30,9 +33,16 @@ def index():
         pass
     else:
         success = 0
+
+    # Opcjonalne ogłoszenie
+    ogloszenie = ''
+    if conf['ogloszenie']['pokaz'] != str(0):
+        ogloszenie = conf['ogloszenie']['tresc'].split(r'\n')
+    
     # View
     return render_template('zapisy/index.html', nauczyciele=nauczyciele,
-                           show_success=int(success)
+                           show_success=int(success),
+                           ogloszenie=ogloszenie
     )
     
 # View wyboru godziny do zapisu
@@ -73,8 +83,8 @@ def nauczyciel(id):
         elif not godzina or not re.match('[0-2]?\d:[0-5]\d', godzina) or godzina != re.match('[0-2]\d:[0-5]\d', godzina).group(0):
             error = "Godzina jest w nieodpowiednim formacie."
         #google reCAPTCHA
-        elif int(conf['captcha']['use_captcha'])==1:
-            if not captcha.checkRecaptcha(captcha_response):
+        elif int(conf['captcha']['use_captcha'])==1 \
+            and not captcha.checkRecaptcha(captcha_response):
                 error = "Okropny z ciebie bot!!!"
         # Trzeba zrobić jakoś transakcje
         elif not dane_nauczyciela['obecny']:
@@ -91,12 +101,29 @@ def nauczyciel(id):
             flash(error)
         else:          
             # Rezerwowanie terminu
+            # Zapis rodzica
+            rodzic = db.execute(
+                'SELECT * FROM rodzice '
+                'WHERE email = ?',
+                (email,)
+            ).fetchone()
+            if not rodzic:
+                db.execute(
+                    'INSERT INTO rodzice '
+                    '(imie, nazwisko, email) '
+                    'VALUES (?, ?, ?)',
+                    (imie_rodzica, nazwisko_rodzica, email)
+                )
+                rodzic = db.execute(
+                    'SELECT * FROM rodzice '
+                    'WHERE imie = ? AND nazwisko = ? AND email = ?',
+                    (imie_rodzica, nazwisko_rodzica, email)
+                ).fetchone()
             db.execute(
                 'INSERT INTO wizyty '
-                '(id_nauczyciela, imie_rodzica, nazwisko_rodzica, email_rodzica, '
-                'imie_ucznia, nazwisko_ucznia, godzina)'
-                ' VALUES (?, ?, ?, ?, ?, ?, ?)',
-                (id, imie_rodzica, nazwisko_rodzica, email, imie_ucznia, nazwisko_ucznia, godzina)
+                '(id_nauczyciela, id_rodzica, godzina, imie_ucznia, nazwisko_ucznia)'
+                ' VALUES (?, ?, ?, ?, ?)',
+                (id, rodzic['id'], godzina, imie_ucznia, nazwisko_ucznia)
             )
             db.commit()
             
@@ -111,6 +138,7 @@ def nauczyciel(id):
                                      hour=godzina,
                                      date=conf['dzien otwarty']['data'],
                                      dane_nauczyciela=dane_nauczyciela,
+                                     link=url_for('manage.auth', key=Serializer(current_app.config['SECRET_KEY']).dumps(rodzic['id']), _external=True),
                 ),
                 recipients=[email]
             )

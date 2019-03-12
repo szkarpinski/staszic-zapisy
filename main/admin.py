@@ -6,6 +6,7 @@ import datetime as dt
 from flask import (
     Blueprint, render_template, session, redirect, url_for, current_app, request, flash
 )
+from main import mail
 from flask.cli import with_appcontext
 from main.db import get_db
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -34,35 +35,38 @@ def admin():
     conf = configparser.ConfigParser()
     conf.read(os.path.join(current_app.instance_path, 'config.ini'))
     dane_dnia = conf['dzien otwarty']
+    dane_ogloszen = conf['ogloszenie']
 
     if request.method == 'POST':
         date = request.form.get('date')
         start = request.form.get('start')
         end = request.form.get('end')
         interval = request.form.get('interval')
+        uzyj_ogloszenia = 1 if request.form.get('czy_ogloszenie') else 0
+        print(uzyj_ogloszenia)
+        tresc_ogloszenia = request.form.get('ogloszenie')
         message = "Ustawiono: "
-        print(date, start, end, interval)
 
         zmieniono = False
-        if date:
+        if date and date.replace('.', '/') != dane_dnia['data']:
             message += "datę, "
             dane_dnia['data'] = date.replace('.', '/')
-            zmieniono = True
-        if start:
+            # zmieniono = True #Zmienienie daty nie usuwa bazy danych
+        if start and start != dane_dnia['start']:
             if start > (end if end else dane_dnia['koniec']):
                 message += 'początek (zła wartość), '
             else:
                 message += "początek, "
                 dane_dnia['start'] = start
                 zmieniono = True
-        if end:
+        if end and end != dane_dnia['koniec']:
             if end < dane_dnia['start']:
                 message += 'koniec (zła wartość), '
             else:
                 message += "koniec, "
                 dane_dnia['koniec'] = end
                 zmieniono = True
-        if interval:
+        if interval and "{}:{}".format(int(interval) // 60, int(interval) % 60) != dane_dnia['blok']:
             interval = int(interval)
             duration = dt.datetime.strptime(
                          dane_dnia['data'] +
@@ -79,7 +83,16 @@ def admin():
                 dane_dnia['blok'] = "{}:{}".format(
                     int(interval) // 60, int(interval) % 60)
                 zmieniono = True
-            
+        print(dane_ogloszen['pokaz'])
+        if uzyj_ogloszenia is not None and str(uzyj_ogloszenia) != dane_ogloszen['pokaz']:
+            message += "widoczność ogłoszenia, "
+            dane_ogloszen['pokaz'] = str(uzyj_ogloszenia)
+            # zmieniono = True
+        if tresc_ogloszenia is not None and tresc_ogloszenia != dane_ogloszen['tresc']:
+            message += "treść ogłoszenia, "
+            dane_ogloszen['tresc'] = tresc_ogloszenia
+            # zmieniono = True
+        
         if message == "Ustawiono: ":
             message = "Nic nie zmieniono"
         else:
@@ -93,7 +106,7 @@ def admin():
         # Reset bazy wizyt po zmianie danych czasowych
         if zmieniono:
             db.execute('DELETE FROM wizyty')
-            db.execute('UPDATE nauczyciele SET obecny = 1')
+            # db.execute('UPDATE nauczyciele SET obecny = 1')
             db.commit()
 
     #Lista nauczycieli
@@ -110,17 +123,50 @@ def admin():
         return int(hm.split(':')[0])*60+int(hm.split(':') [1])
     ustawienia_czasu['interval'] = minutes(dane_dnia['blok'])
 
-    return render_template('admin/panel.html', nauczyciele = nauczyciele, ustawienia_czasu=ustawienia_czasu)
+    uzyj_ogloszenia = int(dane_ogloszen['pokaz'])
+    tresc_ogloszenia = dane_ogloszen['tresc']
+        
+    return render_template('admin/panel.html',
+                           nauczyciele = nauczyciele,
+                           ustawienia_czasu=ustawienia_czasu,
+                           pokaz_ogloszenie=uzyj_ogloszenia,
+                           ogloszenie=tresc_ogloszenia,
+                           czy_ogloszenie=uzyj_ogloszenia,
+    )
 
 #Interfejs ustawień - szczegóły nauczyciela
 @bp.route('/nauczyciel/<int:id>', methods=('GET', 'POST'))
 @login_required
 def nauczyciel(id):
     db = get_db()
+    conf = configparser.ConfigParser()
+    conf.read(os.path.join(current_app.instance_path, 'config.ini'))
+
     if request.method == 'POST':
         print("POST osiagniety")
         
         if request.form.get('delete') == 'true':
+            #Nauczyciel usunięty - mail do rodziców
+            lehrer = db.execute(
+                'SELECT imie, nazwisko FROM nauczyciele WHERE id = ? ', (id,)).fetchone()
+            rodzice = db.execute(
+                'SELECT DISTINCT id_rodzica, imie, nazwisko, email '
+                'FROM wizyty JOIN rodzice ON wizyty.id_rodzica=rodzice.id '
+                'WHERE id_nauczyciela = ? ', (id,)).fetchall()
+            for rodzic in rodzice:
+                mail.send_message(
+                    subject='Ważna zmiana: dzień otwarty {}'.format(conf['dzien otwarty']['data']),
+                    html=render_template('email/nieobecny.html',
+                                         pfname=rodzic['imie'],
+                                         plname=rodzic['nazwisko'],
+                                         date=conf['dzien otwarty']['data'],
+                                         imie_nauczyciela=lehrer['imie'],
+                                         nazwisko_nauczyciela=lehrer['nazwisko'],
+                                         teraz=dt.datetime.now(),
+                    ),
+                    recipients=[rodzic['email']]
+                )
+                                     
             db.execute('DELETE FROM wizyty WHERE id_nauczyciela = ?', (id,))
             db.execute('DELETE FROM nauczyciele WHERE id = ?', (id,))
             db.commit()
@@ -143,6 +189,48 @@ def nauczyciel(id):
             flash(error)
             print("błąd:"+error)
         else:
+            #Mail przy zmmianie obecności nauczyciela
+            lehrer = db.execute(
+                'SELECT imie, nazwisko, obecny FROM nauczyciele WHERE id = ? ',(id,)
+            ).fetchone()
+            if (lehrer['obecny']==1 and obecny=='on') or (lehrer['obecny']==0 and (not obecny=='on')):
+                pass
+            else:
+                #Zmienila sie obecnosc nauczyciela
+                rodzice = db.execute(
+                'SELECT DISTINCT id_rodzica, imie, nazwisko, email '
+                'FROM wizyty JOIN rodzice ON wizyty.id_rodzica=rodzice.id '
+                'WHERE id_nauczyciela = ? ', (id,)).fetchall()
+                if obecny=='on':
+                    for rodzic in rodzice:
+                        mail.send_message(
+                            subject='Ważna zmiana: dzień otwarty {}'.format(conf['dzien otwarty']['data']),
+                            html=render_template('email/znow_obecny.html',
+                                                 pfname=rodzic['imie'],
+                                                 plname=rodzic['nazwisko'],
+                                                 date=conf['dzien otwarty']['data'],
+                                                 imie_nauczyciela=lehrer['imie'],
+                                                 nazwisko_nauczyciela=lehrer['nazwisko'],
+                                                 teraz=dt.datetime.now().strftime('%d/%m/%Y o godzinie %H:%M')
+                            ),
+                            recipients=[rodzic['email']]
+                        )
+                else:
+                    for rodzic in rodzice:
+                        mail.send_message(
+                            subject='Ważna zmiana: dzień otwarty {}'.format(conf['dzien otwarty']['data']),
+                            html=render_template('email/nieobecny.html',
+                                                 pfname=rodzic['imie'],
+                                                 plname=rodzic['nazwisko'],
+                                                 date=conf['dzien otwarty']['data'],
+                                                 imie_nauczyciela=lehrer['imie'],
+                                                 nazwisko_nauczyciela=lehrer['nazwisko'],
+                                                 teraz=dt.datetime.now().strftime('%d/%m/%Y o godzinie %H:%M')
+                            ),
+                            recipients=[rodzic['email']]
+                        )
+                        
+                
             db.execute('UPDATE nauczyciele '
                        'SET imie = ?, nazwisko = ?, email = ?, obecny = ? '
                        'WHERE id = ?',
@@ -152,8 +240,9 @@ def nauczyciel(id):
 
     #Lista zapisów dla nauczyciela
     terminy = db.execute(
-        'SELECT imie_ucznia, nazwisko_ucznia, imie_rodzica, nazwisko_rodzica, godzina '
-        'FROM wizyty WHERE id_nauczyciela = ? ORDER BY godzina', (id,)
+        'SELECT imie_ucznia, nazwisko_ucznia, imie AS imie_rodzica, nazwisko AS nazwisko_rodzica, godzina '
+        'FROM wizyty JOIN rodzice ON wizyty.id_rodzica = rodzice.id '
+        'WHERE wizyty.id_nauczyciela = ? ORDER BY godzina', (id,)
     ).fetchall()
     nauczyciel = db.execute(
         'SELECT imie, nazwisko, email, obecny FROM nauczyciele WHERE id = ?',(id,)
@@ -209,7 +298,8 @@ def login():
         conf = configparser.ConfigParser()
         conf.read(os.path.join(current_app.instance_path, 'config.ini'))
         error = None
-
+        print(conf['admin']['hash'])
+        
         if not check_password_hash(conf['admin']['hash'], password):
             error = 'Nieprawidłowe hasło administratora!'
 

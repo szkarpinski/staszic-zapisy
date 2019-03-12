@@ -38,6 +38,10 @@ def create_app(test_config=None):
     app.register_blueprint(admin.bp)
     admin.init_app(app)
 
+    from . import manage
+    app.register_blueprint(manage.bp)
+    
+
     from . import obsluga_maili
     obsluga_maili.init_app(app)
 

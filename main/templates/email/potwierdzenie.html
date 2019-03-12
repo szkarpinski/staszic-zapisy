@@ -4,7 +4,9 @@
     </head>
     <body>
         Witaj {{ pfname }} {{ plname }},<br/>
-        Potwierdzamy rezerwację terminu spotkania z {{ dane_nauczyciela.imie }} {{ dane_nauczyciela.nazwisko }} <b>{{ date }}</b> o godzinie <b>{{ hour }}</b>. <br/>
+        Potwierdzamy rezerwację terminu spotkania z {{ dane_nauczyciela.imie }} {{ dane_nauczyciela.nazwisko }} <b>{{ date }}</b> o godzinie <b>{{ hour }}</b>.
+        Dostęp do panelu pozwalającego odwołać spotkanie możesz uzyskać przez poniższy link:<br/>
+        <a href="{{link}}">{{ link }}</a><br/><br/>
         Ten mail został wysłany automatycznie, prosimy na niego nie odpowiadać.
     </body>
 </html>

@@ -7,6 +7,11 @@ static/
 .pytest_cache/
 .coverage
 htmlcov/
+bin/
+lib/
+var/
+lib64
+pyvenv.cfg
 
 dist/
 build/
@@ -16,3 +21,6 @@ build/
 .#*
 *~
 */#*#
+
+*.sh
+*.bat
