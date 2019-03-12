@@ -42,13 +42,12 @@
                             {% for t in terminy %}
                                 <tr>
                                     <td>{{ t.godzina }}</td>
-                                    <td>{{ t.imie }} {{ t.nazwisko }}</td>
                                     <td>
-                                        {{ t.imie_ucznia }} {{ t.nazwisko_ucznia }}
+                                        {{ t.imie }} {{ t.nazwisko }}
                                         {% if not t.obecny %}
                                             <span class="red-text">(nieobecny)</span>
-                                        {% endif %}
-                                    </td>
+                                        {% endif %}</td>
+                                    <td>{{ t.imie_ucznia }} {{ t.nazwisko_ucznia }}</td>
                                     <td>
                                          <a href="#" onclick="confirm_cancel({{ loop.index0 }})">Odwołaj</a>
                                     </td>
