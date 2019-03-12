@@ -50,7 +50,7 @@ def admin():
         if date:
             message += "datę, "
             dane_dnia['data'] = date.replace('.', '/')
-            zmieniono = True
+            # zmieniono = True #Zmienienie daty nie usuwa bazy danych
         if start:
             if start > (end if end else dane_dnia['koniec']):
                 message += 'początek (zła wartość), '
@@ -85,11 +85,11 @@ def admin():
         if uzyj_ogloszenia:
             message += "widoczność ogłoszenia, "
             dane_ogloszen['pokaz'] = uzyj_ogloszenia
-            zmieniono = True
+            # zmieniono = True
         if tresc_ogloszenia:
             message += "treść ogłoszenia, "
             dane_ogloszen['tresc'] = tresc_ogloszenia
-            zmieniono = True
+            # zmieniono = True
         
         if message == "Ustawiono: ":
             message = "Nic nie zmieniono"
