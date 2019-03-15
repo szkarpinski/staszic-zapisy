@@ -1,3 +1,4 @@
+
 import functools
 import configparser
 import click
@@ -11,6 +12,7 @@ from flask.cli import with_appcontext
 from main.db import get_db
 from werkzeug.security import check_password_hash, generate_password_hash
 from getpass import getpass
+from flask_weasyprint import HTML, render_pdf
 
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
@@ -313,6 +315,10 @@ def summary():
 
     teraz=dt.datetime.now().strftime('%H:%M %d.%m.%Y')
     return render_template('admin/summary.html', wizyty=wizyty, nauczyciele=nauczyciele, teraz=teraz)
+
+@bp.route('/podsumowanie.pdf')
+def summary_pdf():
+    return render_pdf(url_for('.summary'))
 
 # Interface logowania
 @bp.route('/login', methods=('GET', 'POST'))
