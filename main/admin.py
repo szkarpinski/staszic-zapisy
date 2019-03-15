@@ -1,3 +1,4 @@
+
 import functools
 import configparser
 import click
@@ -11,6 +12,7 @@ from flask.cli import with_appcontext
 from main.db import get_db
 from werkzeug.security import check_password_hash, generate_password_hash
 from getpass import getpass
+from flask_weasyprint import HTML, render_pdf
 
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
@@ -313,6 +315,31 @@ def summary():
 
     teraz=dt.datetime.now().strftime('%H:%M %d.%m.%Y')
     return render_template('admin/summary.html', wizyty=wizyty, nauczyciele=nauczyciele, teraz=teraz)
+
+@bp.route('/podsumowanie.pdf')
+@login_required
+def summary_pdf():
+    db = get_db()
+
+    nauczyciele = db.execute(
+        'SELECT id, imie, nazwisko FROM nauczyciele'
+    ).fetchall()
+
+    lista_wizyt = db.execute(
+        'SELECT id_nauczyciela, godzina, imie_ucznia, nazwisko_ucznia FROM wizyty'
+    ).fetchall()
+
+    # tworzę słownik id_nauczyciela -> wizyty
+    wizyty = { nauczyciel['id']: list() for nauczyciel in nauczyciele}
+    for wizyta in lista_wizyt: wizyty[wizyta['id_nauczyciela']].append(wizyta)
+
+    # sortuję
+    wizyty = {k: sorted(v, key=lambda a: a['godzina']) for k, v in wizyty.items()}
+    nauczyciele = sorted(nauczyciele, key=lambda a: a['nazwisko']+' '+a['imie'])
+
+    teraz=dt.datetime.now().strftime('%H:%M %d.%m.%Y')
+    html = render_template('admin/summary.html', wizyty=wizyty, nauczyciele=nauczyciele, teraz=teraz)
+    return render_pdf(HTML(string=html))
 
 # Interface logowania
 @bp.route('/login', methods=('GET', 'POST'))
