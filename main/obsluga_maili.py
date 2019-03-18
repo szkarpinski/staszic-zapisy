@@ -26,7 +26,7 @@ def send_mails():
                             'FROM wizyty w JOIN nauczyciele n '
                             'ON n.id=w.id_nauczyciela '
                             'JOIN rodzice r ON r.id=w.id_rodzica '
-                            'WHERE r.email = ?',
+                            'WHERE r.email = ? AND obecny = 1',
                             (rodzic,)
                  ).fetchall()
 
@@ -37,7 +37,7 @@ def send_mails():
             recipients=[rodzic],
         )
     
-    nauczyciele = db.execute('SELECT * FROM nauczyciele')
+    nauczyciele = db.execute('SELECT * FROM nauczyciele WHERE obecny = 1')
     for nauczyciel in nauczyciele:
         wizyty = db.execute('SELECT imie_ucznia, nazwisko_ucznia, godzina, '
                             'rodzice.imie AS imie_rodzica, rodzice.nazwisko AS nazwisko_rodzica '
