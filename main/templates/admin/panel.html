@@ -22,8 +22,10 @@
         var teachers = [
             {% for n in nauczyciele %}
                 {'name':'{{n.imie}} {{n.nazwisko}}', 'fname':'{{n.imie}}', 'lname':'{{n.nazwisko}}',
-                    'rendered':  '<li class="collection-item"> <div>{{n.imie}} {{n.nazwisko}}<a href="/admin/nauczyciel/{{n.id}}" '+
-                    'class="secondary-content">Szczegóły</a></div> </li>'
+                    'rendered':  '<li class="collection-item"> <div>'+
+                    '{% if not n.obecny %}<span class="grey-text">{{n.imie}} {{n.nazwisko}} (nieobecny)</span>{% else %}'+
+                    '{{n.imie}} {{n.nazwisko}}{% endif %}'+
+                    '<a href="/admin/nauczyciel/{{n.id}}" class="secondary-content">Szczegóły</a></div> </li>'
                 },
             {% endfor %}
         ];
