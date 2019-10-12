@@ -49,7 +49,7 @@
                 <div class="card-content grey-text text-darken-2 container">
                     <div class="row">
                         <div class="col s8">
-                            <span class="grey-text text-darken-1" style="font-weight:bolder">Wybierz odpowiadającą Ci godzinę spotkania.</span><br/><br/>
+                            <span class="grey-text text-darken-1" style="font-weight:bolder">Wybierz odpowiadającą Ci godzinę spotkania.</span>
                         </div>
                         <div class="col s4" style="text-align:right">
                             <a href="/">Wróć do strony głównej</a>
@@ -57,18 +57,19 @@
                     </div>
                     <div class="row">
                         {% for r in rozklad %}
-                            <div class="col s2" style="text-align:center">
-                                {% if r.wolne %}
-                                    <a class="btn waves-effect waves-light meeting_header" onclick="$('#errors').empty(); expand_meeting({{loop.index0}})" href="#details">
-                                        {{r.start.strftime('%H:%M')}}
-                                    </a>
-                                {% else %}
-                                    <a class="btn disabled meeting_header">
-                                        {{r.start.strftime('%H:%M')}}
-                                    </a>
-                                {% endif %}
+                            <div class="col" style="text-align:center">
+                                <div class="row col">
+                                    {% if r.wolne %}
+                                        <a class="btn waves-effect waves-light meeting_header" onclick="$('#errors').empty(); expand_meeting({{loop.index0}})" href="#details">
+                                            {{r.start.strftime('%H:%M')}}
+                                        </a>
+                                    {% else %}
+                                        <a class="btn disabled meeting_header">
+                                            {{r.start.strftime('%H:%M')}}
+                                        </a>
+                                    {% endif %}
+                                </div>
                             </div>
-                            {% if loop.index % 6 == 0 and not loop.last %}</div><div class="row">{% endif %}
                         {% endfor %}
                     </div>
                 </div>
