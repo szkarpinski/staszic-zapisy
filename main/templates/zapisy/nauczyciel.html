@@ -44,7 +44,7 @@
     <br>
 
     <div class="row">
-        <div class="col s12">
+        <div class="no-padding col s12">
             <div class="card white">
                 <div class="card-content grey-text text-darken-2 container">
                     <div class="row">
@@ -78,56 +78,58 @@
     </div>
 
     <div class="row" id="details" style="display: none;">
-        <div class="col s12">
+        <div class="no-padding col s12">
             <div class="card white">
                 <form id="meeting_form" action="" method="post">
                     <input name="meeting_id" id="meeting_id" type="hidden" value="{{ request.form['meeting_id'] }}"/>
                     <input name="hour" id="hour" type="hidden" value="{{ request.form['hour'] }}"/>
                     <div class="card-content grey-text text-darken-2 container">
                         <div class="row">
-                            <div class="col s6">
+                            <div class="col m6 s12">
                                 <div id="teacher">{{imie}} {{nazwisko}}</div>
                                 <label for="teacher">Nauczyciel <a href="/"><small>(zmień)</small></a></label>
                             </div>
-                            <div class="col s2">
-                                <div id="date">{{ rozklad[0].start.strftime('%d.%m.%Y') }}</div>
-                                <label for="date">Data</label>
-                            </div>
-                            <div class="col s2">
-                                <div id="start">00:00</div>
-                                <label for="start">Od</label>
-                            </div>
-                            <div class="col s2">
-                                <div id="end">00:00</div>
-                                <label for="end">Do</label>
+                            <div class="no-padding col m6 s12">
+                                <div class="col s6">
+                                    <div id="date">{{ rozklad[0].start.strftime('%d.%m.%Y') }}</div>
+                                    <label for="date">Data</label>
+                                </div>
+                                <div class="col s3">
+                                    <div id="start">00:00</div>
+                                    <label for="start">Od</label>
+                                </div>
+                                <div class="col s3">
+                                    <div id="end">00:00</div>
+                                    <label for="end">Do</label>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col s6">
+                            <div class="col m6 s12">
                                 <input name="sfname" id="sfname" value="{{ request.form['sfname'] }}" type="text"/>
                                 <label for="sfname">Imię ucznia</label>
                             </div>
-                            <div class="col s6">
+                            <div class="col m6 s12">
                                 <input name="slname" id="slname" value="{{ request.form['slname'] }}" type="text"/>
                                 <label for="slname">Nazwisko ucznia</label>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col s6">
+                            <div class="col m6 s12">
                                 <input name="pfname" id="pfname" value="{{ request.form['pfname'] }}" type="text"/>
                                 <label for="pfname">Imię rodzica</label>
                             </div>
-                            <div class="col s6">
+                            <div class="col m6 s12">
                                 <input name="plname" id="plname" value="{{ request.form['plname'] }}" type="text"/>
                                 <label for="plname">Nazwisko rodzica</label>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col s6">
+                            <div class="col m6 s12">
                                 <input name="email" id="email" value="{{ request.form['email'] }}" class="validate" type="email"/>
                                 <label for="email">Adres e-mail rodzica</label>
                             </div>
-                            <div class="col s6">
+                            <div class="col m6 s12">
                                 <label>
                                     <input name="rodo" id="rodo" type="checkbox"/>
                                     <span><small>Wyrażam zgodę na przetwarzanie moich danych osobowych.</small></span>
@@ -169,10 +171,10 @@ serwera. Mogą Państwo również zażądać, żebyśmy zaprzestali ich przetwar
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col s6">
+                            <div class="col l6 s12">
                                 <div class="g-recaptcha" data-sitekey="{{captcha_sitekey}}"></div>
                             </div>
-                            <div class="col s6" style="text-align: right">
+                            <div class="col l6 s12" style="text-align: right">
                                 <input class="btn" type="submit" value="Zarezerwuj">
                             </div>
                         </div>
